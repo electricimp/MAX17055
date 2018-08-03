@@ -3,116 +3,45 @@ const MAX17055_STATUS_REG             = 0x00;
 const MAX17055_V_ALRT_TH_REG          = 0x01;
 const MAX17055_T_ALRT_TH_REG          = 0x02;
 const MAX17055_S_ALRT_TH_REG          = 0x03;
-// const MAX17055_AT_RATE_REG            = 0x04;
 const MAX17055_REP_CAP_REG            = 0x05;
 const MAX17055_REP_SOC_REG            = 0x06;
-// const MAX17055_AGE_REG                = 0x07;
 const MAX17055_TEMP_REG               = 0x08;
 const MAX17055_V_CELL_REG             = 0x09;
 const MAX17055_CURRENT_REG            = 0x0A;
 const MAX17055_AVG_CURRENT_REG        = 0x0B;
-// const MAX17055_Q_RESIDUAL_REG         = 0x0C;
-// const MAX17055_MIX_SOC_REG            = 0x0D;
-// const MAX17055_AV_SOC_REG             = 0x0E;
-// const MAX17055_MIX_CAP_REG            = 0x0F;
-
-// const MAX17055_FULL_CAP_REP_REG       = 0x10;
 const MAX17055_TTE_REG                = 0x11;
-// const MAX17055_QR_TABLE_00_REG        = 0x12;
-// const MAX17055_FULL_SOC_THR_REG       = 0x13;
-// const MAX17055_R_CELL_REG             = 0x14;
-// const MAX17055_AVG_TA_REG             = 0x16;
-// const MAX17055_CYCLES_REG             = 0x17;
 const MAX17055_DESIGN_CAP_REG         = 0x18;
-// const MAX17055_AVG_V_CELL_REG         = 0x19;
-// const MAX17055_MIN_MAX_TEMP_REG       = 0x1A;
-// const MAX17055_MIN_MAX_VOLT_REG       = 0x1B;
-// const MAX17055_MIN_MAX_CURR_REG       = 0x1C;
 const MAX17055_CONFIG_REG             = 0x1D;
 const MAX17055_I_CHR_TERM_REG         = 0x1E;
 const MAX17055_AV_CAP_REG             = 0x1F;
-
 const MAX17055_TTF_REG                = 0x20;
 const MAX17055_DEV_NAME_REG           = 0x21;
-// const MAX17055_QR_TABLE_10_REG        = 0x22;
-// const MAX17055_FULL_CAP_NOM_REG       = 0x23;
-// const MAX17055_AIN_REG                = 0x27;
-// const MAX17055_LEARN_CFG_REG          = 0x28;
-// const MAX17055_FILTER_CFG_REG         = 0x29;
-// const MAX17055_RELAX_CFG_REG          = 0x2A;
-// const MAX17055_MISC_CFG_REG           = 0x2B;
-// const MAX17055_T_GAIN_REG             = 0x2C;
-// const MAX17055_T_OFF_REG              = 0x2D;
-// const MAX17055_C_GAIN_REG             = 0x2E;
-// const MAX17055_C_OFF_REG              = 0x2F;
-
-// const MAX17055_QR_TABLE_20_REG        = 0x32;
-// const MAX17055_DIE_TEMP_REG           = 0x34;
-// const MAX17055_FULL_CAP_REG           = 0x35;
-// const MAX17055_R_COMP_0_REG           = 0x38;
-// const MAX17055_TEMP_CO_REG            = 0x39;
 const MAX17055_V_EMPTY_REG            = 0x3A;
 const MAX17055_F_STAT_REG             = 0x3D;
-// const MAX17055_TIMER_REG              = 0x3E;
-// const MAX17055_SHDN_TIMER_REG         = 0x3F;
-
-// const MAX17055_USER_MEM_1_REG         = 0x40;
-// const MAX17055_QR_TABLE_30_REG        = 0x42;
-// const MAX17055_R_GAIN_REG             = 0x43;
 const MAX17055_DQ_ACC_REG             = 0x45;
 const MAX17055_DP_ACC_REG             = 0x46;
-// const MAX17055_CONVG_CFG_REG          = 0x49;
-// const MAX17055_VF_REM_CAP_REG         = 0x4A;
-// const MAX17055_QH_REG                 = 0x4D;
-
 const MAX17055_SOFT_WAKE_CMD_REG      = 0x60;
-
-// const MAX17055_STATUS_2_REG           = 0xB0;
-// const MAX17055_POWER_REG              = 0xB1;
-// const MAX17055_ID_USER_MEM_2_REG      = 0xB2;
-// const MAX17055_AVG_POWER_REG          = 0xB3;
 const MAX17055_I_ALRT_TH_REG          = 0xB4;
-// const MAX17055_CV_MIX_CAP_REG         = 0xB6;
-// const MAX17055_CV_HALF_TIME_REG       = 0xB7;
-// const MAX17055_CG_TEMP_CO_REG         = 0xB8;
-// const MAX17055_CURVE_REG              = 0xB9;
 const MAX17055_HIB_CGF_REG            = 0xBA;
 const MAX17055_CONFIG_2_REG           = 0xBB;
-// const MAX17055_V_RIPPLE_REG           = 0xBC;
-// const MAX17055_RIPPLE_CFG_REG         = 0xBD;
-// const MAX17055_TIMER_H_REG            = 0xBE;
-
-// const MAX17055_R_SENSE_USER_MEM_3_REG = 0xD0;
-// const MAX17055_SC_OCV_LIM_REG         = 0xD1;
-// const MAX17055_SOC_HOLD_REG           = 0xD3;
-// const MAX17055_MAX_PEAK_PWR_REG       = 0xD4;
-// const MAX17055_SUS_PEAK_PWR_REG       = 0xD5;
-// const MAX17055_PACK_RESISTANCE_REG    = 0xD6;
-// const MAX17055_SYS_RESISTANCE_REG     = 0xD7;
-// const MAX17055_MIN_SYS_VOLTGE_REG     = 0xD8;
-// const MAX17055_MPP_CURRENT_REG        = 0xD9;
-// const MAX17055_SPP_CURRENT_REG        = 0xDA;
 const MAX17055_MODEL_CFG_REG          = 0xDB;
-// const MAX17055_AT_Q_RESIDUAL_REG      = 0xDC;
-// const MAX17055_AT_TTE_REG             = 0xDD;
-// const MAX17055_AT_AV_SOC_REG          = 0xDE;
-// const MAX17055_AT_AV_CAP_REG          = 0xDF;
 
 const MAX17055_DEFAULT_I2C_ADDR       = 0x6C;
-const MAX17055_REG_CHECK_TIMEOUT_SEC  = 0.1;
-const MAX17055_REG_CHECK_NUM_RETRYS   = 20;
-const MAX17055_REG_VERIFY_TIMEOUT_SEC = 0.001;
-const MAX17055_REG_VERIFY_NUM_RETRYS  = 3;
 
 const MAX17055_SOFT_WAKE_CMD_CLEAR    = 0x0000;
 const MAX17055_SOFT_WAKE_CMD_WAKE     = 0x0090;
 const MAX17055_HIBERNATE_CMD_CLEAR    = 0x0000;
 
-const MAX17055_V_CHRG_4_2             = 0x00;
-const MAX17055_V_CHRG_4_4_OR_4_35     = 0x01;
+const MAX17055_REG_CHECK_TIMEOUT_SEC  = 0.1;
+const MAX17055_REG_CHECK_NUM_RETRYS   = 20;
+const MAX17055_REG_VERIFY_TIMEOUT_SEC = 0.001;
+const MAX17055_REG_VERIFY_NUM_RETRYS  = 3;
 
 const MAX17055_CHRG_VOLT_DEFAULT_THRESH = 0xFF00;
 const MAX17055_TEMP_CURR_DEFAULT_THRESH = 0x7F80;
+
+const MAX17055_V_CHRG_4_2             = 0x00;
+const MAX17055_V_CHRG_4_4_OR_4_35     = 0x01;
 
 enum MAX17055_BATT_TYPE {
     LiCoO2  = 0,
@@ -211,7 +140,7 @@ class MAX17055 {
                     try {
                         // Reset original values of Hibernate Configuration
                         _writeReg(MAX17055_HIB_CGF_REG, hibCfg);
-                        // Clear POR bit
+                        // Clear POR aler bit
                         _writeVerify(MAX17055_STATUS_REG, 0xFFFD, cb);
                     } catch(e) {
                         return _handleErr(e, cb);
@@ -320,11 +249,7 @@ class MAX17055 {
             "battRemovalDetected"       : ((status & 0x8000) == 0x8000),
             "battInsertDetected"        : ((status & 0x0800) == 0x0800),
             "battAbsent"                : ((status & 0x0008) == 0x0008),
-            "chargeStatePercentChange"  : ((status & 0x0080) == 0x0080),
-            "chargeStateOOB"            : ((status & 0x4000) == 0x4000 || (status & 0x0400) == 0x0400),
-            "tempOOB"                   : ((status & 0x2000) == 0x2000 || (status & 0x0200) == 0x0200),
-            "voltageOOB"                : ((status & 0x1000) == 0x1000 || (status & 0x0100) == 0x0100),
-            "currOOB"                   : ((status & 0x0040) == 0x0040 || (status & 0x0004) == 0x0004)
+            "chargeStatePercentChange"  : ((status & 0x0080) == 0x0080)
         };
     }
 
@@ -337,56 +262,26 @@ class MAX17055 {
         local config2 = _readReg(MAX17055_CONFIG_2_REG);
         if ("enBattRemove" in alerts) {
             // Config bit 0
-            local mask = (alerts.enBattRemove) ? 0xFFFF : 0xFFFE;
-            config = config & mask;
+            local bit = 0;
+            config = (alerts.enBattRemove) ? (config | (0x01 << bit)) : (config & ~(0x01 << bit));
         }
         if ("enBattInsert" in alerts) {
             // Config bit 1
-            local mask = (alerts.enBattInsert) ? 0xFFFF : 0xFFFD;
-            config = config & mask;
+            local bit = 1;
+            config = (alerts.enBattRemove) ? (config | (0x01 << bit)) : (config & ~(0x01 << bit));
         }
         if ("enAlertPin" in alerts) {
             // Config bit 2
-            local mask = (alerts.enBattInsert) ? 0xFFFF : 0xFFFB;
-            config = config & mask;
-        }
-        if ("enTempAlert" in alerts) {
-            // Config2 bit 6
-            local mask = (alerts.enBattInsert) ? 0xFFFF : 0xFFBF;
-            config2 = config2 & mask;
+            local bit = 2;
+            config = (alerts.enBattRemove) ? (config | (0x01 << bit)) : (config & ~(0x01 << bit));
         }
         if ("enChargeStatePercentChange" in alerts) {
             // Config2 bit 7
-            local mask = (alerts.enBattInsert) ? 0xFFFF : 0xFF7F;
-            config2 = config2 & mask;
+            local bit = 7
+            config2 = (alerts.enBattRemove) ? (config2 | (0x01 << bit)) : (config2 & ~(0x01 << bit));
         }
         _writeReg(MAX17055_CONFIG_REG, config);
         _writeReg(MAX17055_CONFIG_2_REG, config2);
-    }
-
-    function latchAlerts(alerts) {
-        local config  = _readReg(MAX17055_CONFIG_REG);
-        if ("temp" in alerts) {
-            // Config bit 13
-            local mask = (alerts.enBattInsert) ? 0xFFFF : 0xDFFF;
-            config = config & mask;
-        }
-        if ("curr" in alerts) {
-            // Config bit 11
-            local mask = (alerts.enBattInsert) ? 0xFFFF : 0xF7FF;
-            config = config & mask;
-        }
-        if ("voltage" in alerts) {
-            // Config bit 12
-            local mask = (alerts.enBattInsert) ? 0xFFFF : 0xEFFF;
-            config = config & mask;
-        }
-        if ("chargeState" in alerts) {
-            // Config bit 14
-            local mask = (alerts.enBattInsert) ? 0xFFFF : 0xBFFF;
-            config = config & mask;
-        }
-        _writeReg(MAX17055_CONFIG_REG, config);
     }
 
     function clearThresholds() {
@@ -394,32 +289,6 @@ class MAX17055 {
         _writeReg(MAX17055_T_ALRT_TH_REG, MAX17055_TEMP_CURR_DEFAULT_THRESH);
         _writeReg(MAX17055_S_ALRT_TH_REG, MAX17055_CHRG_VOLT_DEFAULT_THRESH);
         _writeReg(MAX17055_I_ALRT_TH_REG, MAX17055_TEMP_CURR_DEFAULT_THRESH);
-    }
-
-    function setChargeThresholds(high, low) {
-        // 03h, 0xFF00 (Disabled)
-        // 1% resolution over the full operating range of the RepSOC register
-        _writeReg(MAX17055_S_ALRT_TH_REG, (high << 8 | low));
-    }
-
-    function setCurrentThresholds(high, low) {
-        // B4h,  0x7F80 (Disabled)
-        // Interrupt threshold limits are selectable with 0.4mV/RSENSE resolution over the full operating range of the Current register, 2’s-complement format?
-        // Convert???
-        _writeReg(MAX17055_I_ALRT_TH_REG, (_twosComp(high) << 8 | _twosComp(low)));
-    }
-
-    function setVoltageThresholds(high, low) {
-        // 01h, 0xFF00 (Disabled)
-        // 20mV resolution over the full operating range of the VCell register
-        // Convert???
-        _writeReg(MAX17055_V_ALRT_TH_REG, (high << 8 | low));
-    }
-
-    function setTempThresholds(high, low) {
-         // 02h, 0x7F80 (Disabled)
-        //  2’s-complement format with 1°C resolution over the full operating range of the Temp registe
-        _writeReg(MAX17055_T_ALRT_TH_REG, (_twosComp(high) << 8 | _twosComp(low)));
     }
 
     function _setLSBSize(res) {
