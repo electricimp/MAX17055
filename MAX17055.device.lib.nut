@@ -99,7 +99,10 @@ const MAX17055_MODEL_CFG_REG          = 0xDB;
 // const MAX17055_AT_AV_CAP_REG          = 0xDF;
 
 const MAX17055_DEFAULT_I2C_ADDR       = 0x6C;
-const MAX17055_REG_CHECK_TIMEOUT_SEC  = 0.5;
+const MAX17055_REG_CHECK_TIMEOUT_SEC  = 0.1;
+const MAX17055_REG_CHECK_NUM_RETRYS   = 20;
+const MAX17055_REG_VERIFY_TIMEOUT_SEC = 0.001;
+const MAX17055_REG_VERIFY_NUM_RETRYS  = 3;
 
 const MAX17055_SOFT_WAKE_CMD_CLEAR    = 0x0000;
 const MAX17055_SOFT_WAKE_CMD_WAKE     = 0x0090;
@@ -128,7 +131,7 @@ class MAX17055 {
     _currLSB = null;
 
     _regReadyCounter = 0;
-    _regReadyLimit   = 20;
+    _writeVerifyCounter = 0;
 
     constructor(i2c, addr = null) {
         _i2c = i2c;
@@ -154,9 +157,6 @@ class MAX17055 {
 
         // Get POR bit in status register (bit 1)
         local status = _readReg(MAX17055_STATUS_REG, false);
-        // The first read sometimes fails. Try read a second time.
-        if (status == null) status = _readReg(MAX17055_STATUS_REG, false);
-
         if (status == null) {
             return _handleErr(format("Error reading reg: 0x%02X Err: %i", MAX17055_STATUS_REG, _i2c.readerror()), cb);
         } else if ((status & 0x0002) == 2) {
@@ -165,10 +165,12 @@ class MAX17055 {
                 // Pass error to callback if we don't get expected value after multiple re-checks
                 if (error) return _handleErr(error, cb);
 
+                local hibCfg = null;
+
                 // Catch any i2c read/write errors
                 try {
                     // Store Hibernate Configuration
-                    local hibCfg = _readReg(MAX17055_HIB_CGF_REG);
+                    hibCfg = _readReg(MAX17055_HIB_CGF_REG);
 
                     // Exit Hibernate mode
                     _writeReg(MAX17055_SOFT_WAKE_CMD_REG, MAX17055_SOFT_WAKE_CMD_WAKE);
@@ -206,11 +208,11 @@ class MAX17055 {
                 _regReady(MAX17055_MODEL_CFG_REG, 0x1000, 0, function(er) {
                     // Pass error to callback if we don't get expected value after multiple re-checks
                     if (er) return _handleErr(er, cb);
-
                     try {
                         // Reset original values of Hibernate Configuration
                         _writeReg(MAX17055_HIB_CGF_REG, hibCfg);
-                        if (cb) cb(null);
+                        // Clear POR bit
+                        _writeVerify(MAX17055_STATUS_REG, 0xFFFD, cb);
                     } catch(e) {
                         return _handleErr(e, cb);
                     }
@@ -314,15 +316,15 @@ class MAX17055 {
     function getAlertStatus() {
         local status = _readReg(MAX17055_STATUS_REG);
         return {
-            "powerOnReset"              : (status & 0x0002 == 1),
-            "battRemovalDetected"       : (status & 0x8000 == 1),
-            "battInsertDetected"        : (status & 0x0800 == 1),
-            "battAbsent"                : (status & 0x0008 == 1),
-            "chargeStatePercentChange"  : (status & 0x0080 == 1),
-            "chargeStateOOB"            : (status & 0x4000 == 1 || status & 0x0400 == 1),
-            "tempOOB"                   : (status & 0x2000 == 1 || status & 0x0200 == 1),
-            "voltageOOB"                : (status & 0x1000 == 1 || status & 0x0100 == 1),
-            "currOOB"                   : (status & 0x0040 == 1 || status & 0x0004 == 1)
+            "powerOnReset"              : ((status & 0x0002) == 0x0002),
+            "battRemovalDetected"       : ((status & 0x8000) == 0x8000),
+            "battInsertDetected"        : ((status & 0x0800) == 0x0800),
+            "battAbsent"                : ((status & 0x0008) == 0x0008),
+            "chargeStatePercentChange"  : ((status & 0x0080) == 0x0080),
+            "chargeStateOOB"            : ((status & 0x4000) == 0x4000 || (status & 0x0400) == 0x0400),
+            "tempOOB"                   : ((status & 0x2000) == 0x2000 || (status & 0x0200) == 0x0200),
+            "voltageOOB"                : ((status & 0x1000) == 0x1000 || (status & 0x0100) == 0x0100),
+            "currOOB"                   : ((status & 0x0040) == 0x0040 || (status & 0x0004) == 0x0004)
         };
     }
 
@@ -443,15 +445,46 @@ class MAX17055 {
     function _regReady(reg, mask, expected, next) {
         local val = _readReg(reg, false);
         if (val && (val & mask) == expected) {
-             next(null);
+            _regReadyCounter = 0;
+            next(null);
         } else {
-            if (_regReadyCounter++ > _regReadyLimit) {
-                _regReadyCounter = 0;
-                next(format("Error reading reg: 0x%02X Err: %i", reg, _i2c.readerror()));
-            } else {
+            if (_regReadyCounter++ < MAX17055_REG_CHECK_NUM_RETRYS) {
                 imp.wakeup(MAX17055_REG_CHECK_TIMEOUT_SEC, function() {
                     _regReady(reg, mask, expected, next);
                 }.bindenv(this))
+            } else {
+                _regReadyCounter = 0;
+                next(format("Error reading reg: 0x%02X Err: %i", reg, _i2c.readerror()));
+            }
+        }
+    }
+
+    function _writeVerify(reg, mask, next) {
+        local value = _readReg(reg);
+        value = value & mask;
+        _verify(reg, value, next);
+    }
+
+    function _verify(reg, value, next) {
+        try {
+            _writeReg(reg, value);
+            imp.sleep(MAX17055_REG_VERIFY_TIMEOUT_SEC);
+            local actual = _readReg(reg);
+        } catch (err) {
+            return _handleErr(error, next);
+        }
+        if (value == actual) {
+            // Reset counter
+            _writeVerifyCounter = 0;
+            next(null);
+        } else {
+            if (_writeVerifyCounter++ < MAX17055_REG_VERIFY_NUM_RETRYS) {
+                imp.wakeup(MAX17055_REG_VERIFY_TIMEOUT_SEC, function() {
+                    _verify(reg, value, next);
+                }.bindenv(this))
+            } else {
+                _writeVerifyCounter = 0;
+                next(format("Error write verify to reg: 0x%02X failed. Verification did not match write.", reg));
             }
         }
     }

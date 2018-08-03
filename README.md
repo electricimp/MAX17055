@@ -100,8 +100,6 @@ server.log("Percent of battery remaining: " + state.percent + "%");
 
 Returns the estimated time to empty (TTE) for the application under present temperature and load conditions. The TTE value is determined by relating average capacity with avgerage current. The corresponding avgerage current filtering gives a delay in TTE, but provides more stable results.
 
-23 - AvCap  AvgCurrent
-
 #### Parameters ####
 
 None.
@@ -132,7 +130,7 @@ Float — The estimated time in hours until battery is fully charged.
 #### Example ####
 
 ```squirrel
-local ttf = fuelGauge.getTimeTilEmpty();
+local ttf = fuelGauge.getTimeTilFull();
 server.log("Time til full: " + ttf + "h");
 ```
 
