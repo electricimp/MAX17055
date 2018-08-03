@@ -1,0 +1,493 @@
+// Register Addresses
+const MAX17055_STATUS_REG             = 0x00;
+const MAX17055_V_ALRT_TH_REG          = 0x01;
+const MAX17055_T_ALRT_TH_REG          = 0x02;
+const MAX17055_S_ALRT_TH_REG          = 0x03;
+// const MAX17055_AT_RATE_REG            = 0x04;
+const MAX17055_REP_CAP_REG            = 0x05;
+const MAX17055_REP_SOC_REG            = 0x06;
+// const MAX17055_AGE_REG                = 0x07;
+const MAX17055_TEMP_REG               = 0x08;
+const MAX17055_V_CELL_REG             = 0x09;
+const MAX17055_CURRENT_REG            = 0x0A;
+const MAX17055_AVG_CURRENT_REG        = 0x0B;
+// const MAX17055_Q_RESIDUAL_REG         = 0x0C;
+// const MAX17055_MIX_SOC_REG            = 0x0D;
+// const MAX17055_AV_SOC_REG             = 0x0E;
+// const MAX17055_MIX_CAP_REG            = 0x0F;
+
+// const MAX17055_FULL_CAP_REP_REG       = 0x10;
+const MAX17055_TTE_REG                = 0x11;
+// const MAX17055_QR_TABLE_00_REG        = 0x12;
+// const MAX17055_FULL_SOC_THR_REG       = 0x13;
+// const MAX17055_R_CELL_REG             = 0x14;
+// const MAX17055_AVG_TA_REG             = 0x16;
+// const MAX17055_CYCLES_REG             = 0x17;
+const MAX17055_DESIGN_CAP_REG         = 0x18;
+// const MAX17055_AVG_V_CELL_REG         = 0x19;
+// const MAX17055_MIN_MAX_TEMP_REG       = 0x1A;
+// const MAX17055_MIN_MAX_VOLT_REG       = 0x1B;
+// const MAX17055_MIN_MAX_CURR_REG       = 0x1C;
+const MAX17055_CONFIG_REG             = 0x1D;
+const MAX17055_I_CHR_TERM_REG         = 0x1E;
+const MAX17055_AV_CAP_REG             = 0x1F;
+
+const MAX17055_TTF_REG                = 0x20;
+const MAX17055_DEV_NAME_REG           = 0x21;
+// const MAX17055_QR_TABLE_10_REG        = 0x22;
+// const MAX17055_FULL_CAP_NOM_REG       = 0x23;
+// const MAX17055_AIN_REG                = 0x27;
+// const MAX17055_LEARN_CFG_REG          = 0x28;
+// const MAX17055_FILTER_CFG_REG         = 0x29;
+// const MAX17055_RELAX_CFG_REG          = 0x2A;
+// const MAX17055_MISC_CFG_REG           = 0x2B;
+// const MAX17055_T_GAIN_REG             = 0x2C;
+// const MAX17055_T_OFF_REG              = 0x2D;
+// const MAX17055_C_GAIN_REG             = 0x2E;
+// const MAX17055_C_OFF_REG              = 0x2F;
+
+// const MAX17055_QR_TABLE_20_REG        = 0x32;
+// const MAX17055_DIE_TEMP_REG           = 0x34;
+// const MAX17055_FULL_CAP_REG           = 0x35;
+// const MAX17055_R_COMP_0_REG           = 0x38;
+// const MAX17055_TEMP_CO_REG            = 0x39;
+const MAX17055_V_EMPTY_REG            = 0x3A;
+const MAX17055_F_STAT_REG             = 0x3D;
+// const MAX17055_TIMER_REG              = 0x3E;
+// const MAX17055_SHDN_TIMER_REG         = 0x3F;
+
+// const MAX17055_USER_MEM_1_REG         = 0x40;
+// const MAX17055_QR_TABLE_30_REG        = 0x42;
+// const MAX17055_R_GAIN_REG             = 0x43;
+const MAX17055_DQ_ACC_REG             = 0x45;
+const MAX17055_DP_ACC_REG             = 0x46;
+// const MAX17055_CONVG_CFG_REG          = 0x49;
+// const MAX17055_VF_REM_CAP_REG         = 0x4A;
+// const MAX17055_QH_REG                 = 0x4D;
+
+const MAX17055_SOFT_WAKE_CMD_REG      = 0x60;
+
+// const MAX17055_STATUS_2_REG           = 0xB0;
+// const MAX17055_POWER_REG              = 0xB1;
+// const MAX17055_ID_USER_MEM_2_REG      = 0xB2;
+// const MAX17055_AVG_POWER_REG          = 0xB3;
+const MAX17055_I_ALRT_TH_REG          = 0xB4;
+// const MAX17055_CV_MIX_CAP_REG         = 0xB6;
+// const MAX17055_CV_HALF_TIME_REG       = 0xB7;
+// const MAX17055_CG_TEMP_CO_REG         = 0xB8;
+// const MAX17055_CURVE_REG              = 0xB9;
+const MAX17055_HIB_CGF_REG            = 0xBA;
+const MAX17055_CONFIG_2_REG           = 0xBB;
+// const MAX17055_V_RIPPLE_REG           = 0xBC;
+// const MAX17055_RIPPLE_CFG_REG         = 0xBD;
+// const MAX17055_TIMER_H_REG            = 0xBE;
+
+// const MAX17055_R_SENSE_USER_MEM_3_REG = 0xD0;
+// const MAX17055_SC_OCV_LIM_REG         = 0xD1;
+// const MAX17055_SOC_HOLD_REG           = 0xD3;
+// const MAX17055_MAX_PEAK_PWR_REG       = 0xD4;
+// const MAX17055_SUS_PEAK_PWR_REG       = 0xD5;
+// const MAX17055_PACK_RESISTANCE_REG    = 0xD6;
+// const MAX17055_SYS_RESISTANCE_REG     = 0xD7;
+// const MAX17055_MIN_SYS_VOLTGE_REG     = 0xD8;
+// const MAX17055_MPP_CURRENT_REG        = 0xD9;
+// const MAX17055_SPP_CURRENT_REG        = 0xDA;
+const MAX17055_MODEL_CFG_REG          = 0xDB;
+// const MAX17055_AT_Q_RESIDUAL_REG      = 0xDC;
+// const MAX17055_AT_TTE_REG             = 0xDD;
+// const MAX17055_AT_AV_SOC_REG          = 0xDE;
+// const MAX17055_AT_AV_CAP_REG          = 0xDF;
+
+const MAX17055_DEFAULT_I2C_ADDR       = 0x6C;
+const MAX17055_REG_CHECK_TIMEOUT_SEC  = 0.5;
+
+const MAX17055_SOFT_WAKE_CMD_CLEAR    = 0x0000;
+const MAX17055_SOFT_WAKE_CMD_WAKE     = 0x0090;
+const MAX17055_HIBERNATE_CMD_CLEAR    = 0x0000;
+
+const MAX17055_V_CHRG_4_2             = 0x00;
+const MAX17055_V_CHRG_4_4_OR_4_35     = 0x01;
+
+const MAX17055_CHRG_VOLT_DEFAULT_THRESH = 0xFF00;
+const MAX17055_TEMP_CURR_DEFAULT_THRESH = 0x7F80;
+
+enum MAX17055_BATT_TYPE {
+    LiCoO2  = 0,
+    NCA_NCR = 2,
+    LiFePO4 = 6
+}
+
+class MAX17055 {
+
+    static VERSION = "1.0.0";
+
+    _i2c  = null;
+    _addr = null;
+
+    _capacityLSB = null;
+    _currLSB = null;
+
+    _regReadyCounter = 0;
+    _regReadyLimit   = 20;
+
+    constructor(i2c, addr = null) {
+        _i2c = i2c;
+        _addr = (addr == null) ? MAX17055_DEFAULT_I2C_ADDR : addr;
+    }
+
+    // Currently only supports (EZ config not INI file, all calculations taken from software implementaion guide)
+    // Params:
+        // settings - table with required keys: desCap, senseRes, chrgTerm,
+            // emptyVTarget, recoveryV, chrgV, battType
+        // cb - callback function called when initialization finished
+    function init(settings, cb = null) {
+        // Make sure we have all required settings
+        if (settings.len() < 7 || !("desCap" in settings) || !("senseRes" in settings) ||
+            !("chrgTerm" in settings) || !("emptyVTarget" in settings) || !("recoveryV" in settings) ||
+            !("chrgV" in settings) || !("battType" in settings)) {
+            _handleErr("Missing a required setting. Cannot initialize MAX17055", cb);
+            return;
+        }
+
+        // Set Register Standard Resolution vars (these are based on resistor value)
+        _setLSBSize(settings.senseRes);
+
+        // Get POR bit in status register (bit 1)
+        local status = _readReg(MAX17055_STATUS_REG, false);
+        // The first read sometimes fails. Try read a second time.
+        if (status == null) status = _readReg(MAX17055_STATUS_REG, false);
+
+        if (status == null) {
+            return _handleErr(format("Error reading reg: 0x%02X Err: %i", MAX17055_STATUS_REG, _i2c.readerror()), cb);
+        } else if ((status & 0x0002) == 2) {
+            // Get DNR (data not ready) bit in status register (bit 0) - may take (710ms from powerup)
+            _regReady(MAX17055_F_STAT_REG, 0x0001, 0, function(error) {
+                // Pass error to callback if we don't get expected value after multiple re-checks
+                if (error) return _handleErr(error, cb);
+
+                // Catch any i2c read/write errors
+                try {
+                    // Store Hibernate Configuration
+                    local hibCfg = _readReg(MAX17055_HIB_CGF_REG);
+
+                    // Exit Hibernate mode
+                    _writeReg(MAX17055_SOFT_WAKE_CMD_REG, MAX17055_SOFT_WAKE_CMD_WAKE);
+                    _writeReg(MAX17055_HIB_CGF_REG, MAX17055_HIBERNATE_CMD_CLEAR);
+                    _writeReg(MAX17055_SOFT_WAKE_CMD_REG, MAX17055_SOFT_WAKE_CMD_CLEAR);
+
+                    // Set Battery Config - these must be passed in
+                    local desCap = (settings.desCap * _capacityLSB).tointeger();
+
+                    _writeReg(MAX17055_DESIGN_CAP_REG, desCap);
+                    _writeReg(MAX17055_DQ_ACC_REG, (desCap / 32));
+
+                    local chrgTherm = (settings.chrgTerm / _currLSB).tointeger();
+                    _writeReg(MAX17055_I_CHR_TERM_REG, _twosComp(chrgTherm));
+
+                    // Empty Voltage Target set in 10mV increments to bits 7-15,
+                    // Recovery Voltage set in 40mV increments to bits 0-6
+                    // ie defaults 3.3V and 3.8V sets reg to 0xA561, ((3.3 * 1000 / 10) << 7) | (3.88 * 1000 / 40)
+                    local mt = (settings.emptyVTarget * 100).tointeger();
+                    local recovery = ( settings.recoveryV * 25).tointeger();
+                    _writeReg(MAX17055_V_EMPTY_REG, (mt << 7) | recovery);
+
+                    // Simplified from example code: (desCap / 32) * (dPAccCoefficient / descap) = dPAccCoefficient / 32
+                    local dPAcc = (settings.chrgV) ? (51200 / 32) : (44138 / 32);
+                    _writeReg(MAX17055_DP_ACC_REG, dPAcc);
+
+                    // Refresh (bit 15), VChg (bit 10), ModelId (bits 4-7)
+                    local model = (0x8000 | (settings.chrgV << 10) | (settings.battType << 4));
+                    _writeReg(MAX17055_MODEL_CFG_REG, model);
+                } catch(err) {
+                    return _handleErr(err, cb);
+                }
+
+                // Wait for refresh bit to clear (bit 15)
+                _regReady(MAX17055_MODEL_CFG_REG, 0x1000, 0, function(er) {
+                    // Pass error to callback if we don't get expected value after multiple re-checks
+                    if (er) return _handleErr(er, cb);
+
+                    try {
+                        // Reset original values of Hibernate Configuration
+                        _writeReg(MAX17055_HIB_CGF_REG, hibCfg);
+                        if (cb) cb(null);
+                    } catch(e) {
+                        return _handleErr(e, cb);
+                    }
+                }.bindenv(this))
+            }.bindenv(this));
+        } else {
+            if (cb) cb(null);
+        }
+    }
+
+    function getVoltage() {
+        // Register values calculated based on (datasheet table 6)
+        // ModelGauge Register Standard Resolutions Table
+        // Voltage 1.25mV / 16 (0.078125)
+        local voltage = _readReg(MAX17055_V_CELL_REG);
+        // Return value in Volts
+        return (voltage * 0.078125) / 1000;
+    }
+
+    function getCurrent() {
+        // Register values calculated based on (datasheet table 6)
+        // ModelGauge Register Standard Resolutions Table
+        // Current 1.5625μV/R_SENSE
+        local curr = _readReg(MAX17055_CURRENT_REG);
+        curr = _twosComp(curr);
+        // Convert to mA
+        return (curr * _currLSB);
+    }
+
+    // Return time til empty
+    function getTimeTilEmpty() {
+        // Register values calculated based on (datasheet table 6)
+        // ModelGauge Register Standard Resolutions Table
+        // Time 5.625s
+        local tte = _readReg(MAX17055_TTE_REG);
+        // Convert to hours
+        return (tte * 5.625 / 3600);
+    }
+
+    // Return time til full
+    function getTimeTilFull() {
+        // Register values calculated based on (datasheet table 6)
+        // ModelGauge Register Standard Resolutions Table
+        // Time 5.625s
+        local ttf = _readReg(MAX17055_TTF_REG);
+        // Convert to hours
+        return (ttf * 5.625 / 3600);
+    }
+
+
+    function getAvgCurrent() {
+        // Register values calculated based on (datasheet table 6)
+        // ModelGauge Register Standard Resolutions Table
+        // Current 1.5625μV/R_SENSE
+        local curr = _readReg(MAX17055_AVG_CURRENT_REG);
+        curr = _twosComp(curr);
+        // Convert to mA
+        return (curr * _currLSB);
+    }
+
+    function getAvgCapacity() {
+        // Register values calculated based on (datasheet table 6)
+        // ModelGauge Register Standard Resolutions Table
+        // Capacity 5.0μVH/ R_SENSE
+        local capacity = _readReg(MAX17055_AV_CAP_REG);
+        capacity = _twosComp(capacity);
+        // Convert to mAh
+        return (capacity * _capacityLSB);
+    }
+
+    function getDeviceRev() {
+        return _readReg(MAX17055_DEV_NAME_REG);
+    }
+
+    // Return state of charge
+    function getStateOfCharge() {
+        // Register values calculated based on (datasheet table 6)
+        // ModelGauge Register Standard Resolutions Table
+        // Percent 1/256%, Capacity 5.0μVH/ R_SENSE
+        local percent  = _readReg(MAX17055_REP_SOC_REG);
+        percent /= 256;
+        local capacity = _readReg(MAX17055_REP_CAP_REG);
+        capacity = _twosComp(capacity);
+        // Convert to mAh
+        capacity *= _capacityLSB;
+
+        return {
+            "percent"  : percent,
+            "capacity" : capacity
+        };
+    }
+
+    function getTemperature() {
+        // Register values calculated based on (datasheet table 6)
+        // ModelGauge Register Standard Resolutions Table
+        local temp  = _readReg(MAX17055_TEMP_REG);
+        temp = _twosComp(temp);
+        return (temp / 256.0);
+    }
+
+    function getAlertStatus() {
+        local status = _readReg(MAX17055_STATUS_REG);
+        return {
+            "powerOnReset"              : (status & 0x0002 == 1),
+            "battRemovalDetected"       : (status & 0x8000 == 1),
+            "battInsertDetected"        : (status & 0x0800 == 1),
+            "battAbsent"                : (status & 0x0008 == 1),
+            "chargeStatePercentChange"  : (status & 0x0080 == 1),
+            "chargeStateOOB"            : (status & 0x4000 == 1 || status & 0x0400 == 1),
+            "tempOOB"                   : (status & 0x2000 == 1 || status & 0x0200 == 1),
+            "voltageOOB"                : (status & 0x1000 == 1 || status & 0x0100 == 1),
+            "currOOB"                   : (status & 0x0040 == 1 || status & 0x0004 == 1)
+        };
+    }
+
+    function clearStatusAlerts() {
+        _writeReg(MAX17055_STATUS_REG, 0x0000);
+    }
+
+    function enableAlerts(alerts) {
+        local config  = _readReg(MAX17055_CONFIG_REG);
+        local config2 = _readReg(MAX17055_CONFIG_2_REG);
+        if ("enBattRemove" in alerts) {
+            // Config bit 0
+            local mask = (alerts.enBattRemove) ? 0xFFFF : 0xFFFE;
+            config = config & mask;
+        }
+        if ("enBattInsert" in alerts) {
+            // Config bit 1
+            local mask = (alerts.enBattInsert) ? 0xFFFF : 0xFFFD;
+            config = config & mask;
+        }
+        if ("enAlertPin" in alerts) {
+            // Config bit 2
+            local mask = (alerts.enBattInsert) ? 0xFFFF : 0xFFFB;
+            config = config & mask;
+        }
+        if ("enTempAlert" in alerts) {
+            // Config2 bit 6
+            local mask = (alerts.enBattInsert) ? 0xFFFF : 0xFFBF;
+            config2 = config2 & mask;
+        }
+        if ("enChargeStatePercentChange" in alerts) {
+            // Config2 bit 7
+            local mask = (alerts.enBattInsert) ? 0xFFFF : 0xFF7F;
+            config2 = config2 & mask;
+        }
+        _writeReg(MAX17055_CONFIG_REG, config);
+        _writeReg(MAX17055_CONFIG_2_REG, config2);
+    }
+
+    function latchAlerts(alerts) {
+        local config  = _readReg(MAX17055_CONFIG_REG);
+        if ("temp" in alerts) {
+            // Config bit 13
+            local mask = (alerts.enBattInsert) ? 0xFFFF : 0xDFFF;
+            config = config & mask;
+        }
+        if ("curr" in alerts) {
+            // Config bit 11
+            local mask = (alerts.enBattInsert) ? 0xFFFF : 0xF7FF;
+            config = config & mask;
+        }
+        if ("voltage" in alerts) {
+            // Config bit 12
+            local mask = (alerts.enBattInsert) ? 0xFFFF : 0xEFFF;
+            config = config & mask;
+        }
+        if ("chargeState" in alerts) {
+            // Config bit 14
+            local mask = (alerts.enBattInsert) ? 0xFFFF : 0xBFFF;
+            config = config & mask;
+        }
+        _writeReg(MAX17055_CONFIG_REG, config);
+    }
+
+    function clearThresholds() {
+        _writeReg(MAX17055_V_ALRT_TH_REG, MAX17055_CHRG_VOLT_DEFAULT_THRESH);
+        _writeReg(MAX17055_T_ALRT_TH_REG, MAX17055_TEMP_CURR_DEFAULT_THRESH);
+        _writeReg(MAX17055_S_ALRT_TH_REG, MAX17055_CHRG_VOLT_DEFAULT_THRESH);
+        _writeReg(MAX17055_I_ALRT_TH_REG, MAX17055_TEMP_CURR_DEFAULT_THRESH);
+    }
+
+    function setChargeThresholds(high, low) {
+        // 03h, 0xFF00 (Disabled)
+        // 1% resolution over the full operating range of the RepSOC register
+        _writeReg(MAX17055_S_ALRT_TH_REG, (high << 8 | low));
+    }
+
+    function setCurrentThresholds(high, low) {
+        // B4h,  0x7F80 (Disabled)
+        // Interrupt threshold limits are selectable with 0.4mV/RSENSE resolution over the full operating range of the Current register, 2’s-complement format?
+        // Convert???
+        _writeReg(MAX17055_I_ALRT_TH_REG, (_twosComp(high) << 8 | _twosComp(low)));
+    }
+
+    function setVoltageThresholds(high, low) {
+        // 01h, 0xFF00 (Disabled)
+        // 20mV resolution over the full operating range of the VCell register
+        // Convert???
+        _writeReg(MAX17055_V_ALRT_TH_REG, (high << 8 | low));
+    }
+
+    function setTempThresholds(high, low) {
+         // 02h, 0x7F80 (Disabled)
+        //  2’s-complement format with 1°C resolution over the full operating range of the Temp registe
+        _writeReg(MAX17055_T_ALRT_TH_REG, (_twosComp(high) << 8 | _twosComp(low)));
+    }
+
+    function _setLSBSize(res) {
+        // Register values calculated based on (datasheet table 6)
+        // ModelGauge Register Standard Resolutions Table
+        // Capacity 5.0μVH/ R_SENSE, Current 1.5625μV/R_SENSE
+
+        // Convert from micro to milli
+        local res = res * 1000;
+        // LSB vals in millis
+        _capacityLSB = (5.0 / res);
+        _currLSB = (1.5625 / res);
+    }
+
+    function _handleErr(err, cb) {
+        if (cb == null) {
+            throw err;
+        } else {
+            cb(err);
+        }
+    }
+
+    function _regReady(reg, mask, expected, next) {
+        local val = _readReg(reg, false);
+        if (val && (val & mask) == expected) {
+             next(null);
+        } else {
+            if (_regReadyCounter++ > _regReadyLimit) {
+                _regReadyCounter = 0;
+                next(format("Error reading reg: 0x%02X Err: %i", reg, _i2c.readerror()));
+            } else {
+                imp.wakeup(MAX17055_REG_CHECK_TIMEOUT_SEC, function() {
+                    _regReady(reg, mask, expected, next);
+                }.bindenv(this))
+            }
+        }
+    }
+
+    // Reads 2 bytes from the specified register
+    // Returns null if i2c read error, otherwise an integer
+    function _readReg(reg, throwErr = true) {
+        local result = _i2c.read(_addr, reg.tochar(), 2);
+        if (result == null) {
+            if (throwErr) {
+                throw format("Error reading reg: 0x%02X Err: %i", reg, _i2c.readerror());
+            } else {
+                return result;
+            }
+        }
+        return (result[1] << 8 | result[0]);
+    }
+
+    // Writes 2 bytes of data to the specified register
+    // Returns 0 if write was successful, otherwise and i2c error code
+    function _writeReg(reg, data, throwErr = true) {
+        // Write data com protocol - from user guide
+        // start, slave addr, WR, ack, memory addr, ack, data0 (LSB), ack, data0 (MSB), ack, data1 (LSB) ... dataN (MSB), ack, stop
+        local result = _i2c.write(_addr, format("%c%c%c", reg, (data & 0x00FF), (data >> 8)));
+        if (result != 0 && throwErr) {
+            throw format("Error writing to reg: 0x%02X Err: %i", reg, result);
+        }
+        return result;
+    }
+
+    function _twosComp(value) {
+        if (value & 0x8000) {
+            value = ~(value & 0x7FFF) + 1;
+            return -1 * (value & 0x7FFF);
+        }
+        return value;
+    }
+
+}

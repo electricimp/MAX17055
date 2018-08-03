@@ -1,1 +1,480 @@
-# MAX170555
+# MAX170555 #
+
+The MAX17055 is a low power 7μA operating current fuel gauge IC that implements Maxim ModelGauge m5 EZ algorithm. It measures voltage, current, and temperature to produce fuel gauge results.
+
+**To add this library to your project, add the following to the top of your device code:**
+
+`#require "MAX170555.lib.nut:1.0.0"`
+
+## Class Usage ##
+
+### Constructor: MAX17055(*i2cBus[, i2cAddress]*) ###
+
+#### Parameters ####
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| *i2cBus* | i2c bus object | Yes | The imp i2c bus that the fuel gauge is wired to. The i2c bus must be preconfigured. The library will not configure the bus. |
+| *i2cAddress* | integer | No | The i2c address of the fuel gauge. Default value is `0x6c` |
+
+#### Return Value ####
+
+None.
+
+#### Example ####
+
+```squirrel
+local i2c = hardware.i2cKL
+i2c.configure(CLOCK_SPEED_400_KHZ);
+fuelGauge <- MAX17055(i2c);
+```
+
+## Class Methods ##
+
+### init(*settings[, cb]*) ###
+
+Initializes the fuel gauge using the configuration settings passed in the *settings* table. Initialization is an asynchonous process, the optional callback funciton will be triggered when initialization is complete.
+
+#### Parameters ####
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| *settings* | table | Yes | A table with the configuration settings. See below. |
+| *cb* | function | No | Function that is triggered when initialization is complete. |
+
+##### Settings Table #####
+
+| Slot Name | Type | Required | Description |
+| --- | --- | --- | --- |
+| *desCap* | integer | Yes | The designed capacity of the battery in mAh. |
+| *senseRes* | float | Yes | The size of the sense resistor in ohms. |
+| *chrgTerm* | integer | Yes | The battery's termination charge in mA. |
+| *emptyVTarget* | float | Yes | The empty target voltage. Resolution is 10mV the value should be given in Volts. |
+| *recoveryV* | float | Yes | Once the cell voltage rises above this point, empty voltage detection is reenabled. Resolution is 40mV the value should be given in Volts. |
+| *chrgV* | constant | Yes | The charge voltage. Either MAX17055_V_CHRG_4_2 (4.2V), or MAX17055_V_CHRG_4_4_OR_4_35 (4.35V or 4.4V). |
+| *battType* | enum | Yes | Select the type of battery from the following: MAX17055_BATT_TYPE.LiCoO2 (most common), MAX17055_BATT_TYPE.NCA_NCR, or MAX17055_BATT_TYPE.LiFePO4. |
+
+#### Return Value ####
+
+None.
+
+#### Example ####
+
+```squirrel
+local settings = {
+    "desCap"       : 2000, // mAh
+    "senseRes"     : 0.01, // ohms
+    "chrgTerm"     : 20,   // mA
+    "emptyVTarget" : 3.3,  // V
+    "recoveryV"    : 3.88, // V
+    "chrgV"        : MAX17055_V_CHRG_4_4_OR_4_35,
+    "battType"     : MAX17055_BATT_TYPE.LiCoO2
+}
+
+fuelGauge.init(settings, function() {
+    server.log("Fuel gauge initialized.");
+});
+```
+
+### getStateOfCharge() ###
+
+Returns the reported remaining capacity in mAh and state-of-charge percentage output. The reported capacity is protected from making sudden jumps during load changes.
+
+#### Parameters ####
+
+None.
+
+#### Return Value ####
+
+Table — with keys "percent" and "capacity" returned in mAh.
+
+#### Example ####
+
+```squirrel
+local state = fuelGauge.getStateOfCharge();
+server.log("Remaining cell capacity: " + state.capacity + "mAh");
+server.log("Percent of battery remaining: " + state.percent + "%");
+```
+
+### getTimeTilEmpty() ###
+
+Returns the estimated time to empty (TTE) for the application under present temperature and load conditions. The TTE value is determined by relating average capacity with avgerage current. The corresponding avgerage current filtering gives a delay in TTE, but provides more stable results.
+
+23 - AvCap  AvgCurrent
+
+#### Parameters ####
+
+None.
+
+#### Return Value ####
+
+Float — The estimated time in hours until battery is empty.
+
+#### Example ####
+
+```squirrel
+local tte = fuelGauge.getTimeTilEmpty();
+server.log("Time til empty: " + tte + "h");
+```
+
+### getTimeTilFull() ###
+
+Returns the estimated time to full (TTF) for the application under present conditions. The TTF value is determined by learning the constant current and constant voltage portions of the charge cycle based on experience of prior charge cycles. Time to full is then estimated by comparing present charge current to the charge termination current. Operation of the TTF register assumes all charge profiles are consistent in the application.
+
+#### Parameters ####
+
+None.
+
+#### Return Value ####
+
+Float — The estimated time in hours until battery is fully charged.
+
+#### Example ####
+
+```squirrel
+local ttf = fuelGauge.getTimeTilEmpty();
+server.log("Time til full: " + ttf + "h");
+```
+
+### getVoltage() ###
+
+Returns the voltage measured between BATT and CSP pins.
+
+#### Parameters ####
+
+None.
+
+#### Return Value ####
+
+Float — The voltage in volts.
+
+#### Example ####
+
+```squirrel
+local votage = fuelGauge.getVoltage();
+server.log("Voltage: " + votage + "V");
+```
+
+### getCurrent() ###
+
+This method measures the voltage between the CSP and CSN pins. Voltages outside the minimum and maximum register values are reported as the minimum or maximum value. The measured voltage value is divided by the sense resistance and converted to Amperes. The value of the sense resistor determines the resolution and the fullscale range of the current readings.
+
+#### Parameters ####
+
+None.
+
+#### Return Value ####
+
+Float — The current in mA.
+
+#### Example ####
+
+```squirrel
+local current = fuelGauge.getCurrent();
+server.log("Current: " + current + "mA");
+```
+
+### getAvgCurrent() ###
+
+Returns an average of current readings in mA.
+
+#### Parameters ####
+
+None.
+
+#### Return Value ####
+
+Float — An average of current readings in mA.
+
+#### Example ####
+
+```squirrel
+local current = fuelGauge.getAvgCurrent();
+server.log("Average current: " + current + "mA");
+```
+
+### getAvgCapacity() ###
+
+Returns the calculated available capacity of the battery based on all inputs from the ModelGauge m5 algorithm including empty compensation. This provides unfiltered results. Jumps in the reported values can be caused by abrupt changes in load current or temperature.
+
+#### Parameters ####
+
+None.
+
+#### Return Value ####
+
+Float — Unfiltered capacity results in mAh.
+
+#### Example ####
+
+```squirrel
+local capacity = fuelGauge.getAvgCapacity();
+server.log("Cell capacity: " + capacity + "mAh");
+```
+
+### getTemperature() ###
+
+Returns the internal die temperature in °C.
+
+#### Parameters ####
+
+None.
+
+#### Return Value ####
+
+Float — The temperature in °C.
+
+#### Example ####
+
+```squirrel
+local temp = fuelGauge.getTemperature();
+server.log("Temp: " + temp + "°C");
+```
+
+### enableAlerts(alerts) ###
+
+Use this method to enable or disable the alert pin, battery, percent change, or temperature alerts. It is recommened that thresholds are configured before enabling the alert pin.
+
+#### Parameters ####
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| *alerts* | table | Yes | A table with the alerts to be enabled/disabled. See below. |
+
+##### Enable Alerts Table #####
+
+| Slot Name | Type | Required | Description |
+| --- | --- | --- | --- |
+| *enAlertPin* | boolean | No | Whether to enable or disable the alert interrupt pin. |
+| *enBattRemove* | boolean | No | Whether to enable or disable an alert when battery is removed. |
+| *enBattInsert* | boolean | No | Whether to enable or disable an alert when battery is inserted. |
+| *enTempAlert* | boolean | No | Whether to enable or disable an alert when temperature is over/under threshold. |
+| *enChargeStatePercentChange* | boolean | No | Whether to enable or disable an alert when state of charge percentage crosses an integer percentage boundary, such as 50.0%, 51.0%, etc. |
+
+#### Return Value ####
+
+None.
+
+#### Example ####
+
+```squirrel
+local enAlerts = {
+    "enTempAlert" : true
+};
+fuelGauge.enableAlerts(enAlerts);
+```
+
+### latchAlerts(alerts) ###
+
+Over/Under alerts can be configured to clear when condition is no longer out of range, or can be latched so they are not cleared until the *clearStatusAlerts()* method is called.
+
+#### Parameters ####
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| *alerts* | table | Yes | A table with the alerts to be latched. See below. |
+
+##### Latch Alerts Table #####
+
+| Slot Name | Type | Required | Description |
+| --- | --- | --- | --- |
+| *temp* | boolean | No | True to latch temperature alerts until software clears, false to clear automatically. |
+| *curr* | boolean | No | True to latch current alerts until software clears, false to clear automatically. |
+| *voltage* | boolean | No | True to latch voltage alerts until software clears, false to clear automatically. |
+| *chargeState* | boolean | No | True to latch state of charge alerts until software clears, false to clear automatically. |
+
+#### Return Value ####
+
+None.
+
+#### Example ####
+
+```squirrel
+local latch = {
+    "curr"      : true,
+    "voltage"   : true
+};
+fuelGauge.latchAlerts(latch);
+```
+
+### setChargeThresholds(high, low) ###
+
+Sets the high and low thresholds for state of charge over/under alert. The default high threshold is `0xFF`, and low threshold is `0x00` (Disabled). Interrupt threshold limits are configurable with 1% resolution.
+
+#### Parameters ####
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| *high* | integer | Yes | An 8 bit integer, state of charge readings above this threshold will trigger an alert. |
+| *low* | integer | Yes | An 8 bit integer, state of charge readings below this threshold will trigger an alert. |
+
+#### Return Value ####
+
+None.
+
+#### Example ####
+
+```squirrel
+fuelGauge.setChargeThresholds(90, 10);
+```
+
+### setCurrentThresholds(high, low) ###
+
+Sets the high and low thresholds for current over/under alert. The default high threshold is `0x7F`, and low threshold is `0x80` (Disabled). Interrupt threshold limits are selectable with 0.4mV / senseResistor resolution based on the operating range of the current register.
+
+#### Parameters ####
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| *high* | integer | Yes | An 8 bit integer, current readings above this threshold will trigger an alert. |
+| *low* | integer | Yes | An 8 bit integer, current readings below this threshold will trigger an alert. |
+
+#### Return Value ####
+
+None.
+
+#### Example ####
+
+```squirrel
+fuelGauge.setCurrentThresholds(40, -40);
+```
+
+### setVoltageThresholds(high, low) ###
+
+Sets the high and low thresholds for voltage over/under alert. The default high threshold is `0xFF`, and low threshold is `0x00` (Disabled). Interrupt threshold limits are configurable with 20mV resolution.
+
+#### Parameters ####
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| *high* | integer | Yes | An 8 bit integer, voltage readings above this threshold will trigger an alert. |
+| *low* | integer | Yes | An 8 bit integer, voltage readings below this threshold will trigger an alert. |
+
+#### Return Value ####
+
+None.
+
+#### Example ####
+
+```squirrel
+fuelGauge.setVoltageThresholds(300, 50);
+```
+
+### setTempThresholds(high, low) ###
+
+Sets the high and low thresholds for temperature over/under alert. The default high threshold is `0x7F`, and low threshold is `0x80` (Disabled). Interrupt threshold limits are configurable with with 1°C resolution.
+
+#### Parameters ####
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| *high* | integer | Yes | An 8 bit integer, voltage readings above this threshold will trigger an alert. |
+| *low* | integer | Yes | An 8 bit integer, voltage readings below this threshold will trigger an alert. |
+
+#### Return Value ####
+
+None.
+
+#### Example ####
+
+```squirrel
+fuelGauge.setTempThresholds(30, 15);
+```
+
+### clearThresholds() ###
+
+Sets all threshold registers to default values, in effect disabling alerts.
+
+#### Parameters ####
+
+None.
+
+#### Return Value ####
+
+None.
+
+#### Example ####
+
+```squirrel
+fuelGauge.clearThresholds();
+```
+
+### getAlertStatus() ###
+
+Returns a table with the current status of all flags related to alert thresholds and battery insertion or removal. Alerts generated by battery insertion or removal can only be reset by calling *clearStatusAlerts()*. Alerts generated by a threshold-level violation can be configured to latch, being cleared by calling *clearStatusAlerts()*, or if not latched will be cleared automatically when the threshold level is no longer violated.
+
+#### Parameters ####
+
+None.
+
+#### Return Value ####
+
+Table — with boolean alert thresholds and battery insertion or removal flags.
+
+##### Return Table #####
+
+| Slot Name | Type | Description |
+| --- | --- | --- |
+| *powerOnReset* | boolean | True when device detects a software or hardware power on reset event has occurred. |
+| *battRemovalDetected* | boolean | When enabled, true when the system detects that a battery has been removed. This flag must be cleared in order to detect the next removal event. |
+| *battInsertDetected* | boolean | When enabled, true when the system detects that a battery has been inserted. This flag must be cleared in order to detect the next insertion event. |
+| *battAbsent* | boolean | True when the system detects that a battery is absent, false when system detects battery is present. |
+| *chargeStatePercentChange* | boolean | When enabled, true whenever the state of charge percentage crosses an integer percentage boundary, such as 50.0%, 51.0%, etc. This flag must be cleared to detect next event. |
+| *chargeStateOOB* | boolean | True whenever the state of charge is below or above the state of charge thresholds. This flag can be set to clear automatically or latched until cleared. |
+| *tempOOB* | boolean | When enabled, true whenever the temperature is below or above the temperature thresholds. This flag can be set to clear automatically or latched until cleared. |
+| *voltageOOB* | boolean | True whenever the voltage is below or above the voltage thresholds. This flag can be set to clear automatically or latched until cleared. |
+| *currOOB* | boolean | True whenever the current is below or above the current thresholds. This flag can be set to clear automatically or latched until cleared. |
+
+#### Example ####
+
+```squirrel
+local status = fuelGauge.getAlertStatus();
+foreach (alert, state in status) {
+    if (state) server.log("Alert detected: " + alert);
+}
+```
+
+### clearStatusAlerts() ###
+
+Clears all the status alerts flags, so next event can be detected.
+
+#### Parameters ####
+
+None.
+
+#### Return Value ####
+
+None.
+
+#### Example ####
+
+```squirrel
+local status = fuelGauge.getAlertStatus();
+local alertDetected = false;
+foreach (alert, state in status) {
+    if (state) {
+        alertDetected = true;
+        server.log("Alert detected: " + alert);
+    }
+}
+if (alertDetected) fuelGauge.clearStatusAlerts();
+```
+
+### getDeviceRev() ###
+
+Returns revision information. The initail silicon revision is `0x4010`.
+
+#### Parameters ####
+
+None.
+
+#### Return Value ####
+
+Integer - Revision information.
+
+#### Example ####
+
+```squirrel
+local rev = fuelGauge.getDeviceRev();
+server.log(format("Fuel gauge revision: 0x%04X", rev));
+```
