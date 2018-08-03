@@ -337,3 +337,7 @@ Integer - Revision information.
 local rev = fuelGauge.getDeviceRev();
 server.log(format("Fuel gauge revision: 0x%04X", rev));
 ```
+
+## License ##
+
+This library is licensed under the [MIT License](./LICENSE).
