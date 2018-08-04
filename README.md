@@ -31,16 +31,17 @@ fuelGauge <- MAX17055(i2c);
 
 ## Class Methods ##
 
-### init(*settings[, cb]*) ###
+### init(*settings[, callback]*) ###
 
-Initializes the fuel gauge using the configuration settings passed in the *settings* table. Initialization is an asynchonous process, the optional callback funciton will be triggered when initialization is complete.
+Initializes the fuel gauge. If a power on reset alert is detected the *settings* parameter will be used to configure the fuel gauge. Initialization is an asynchonous process, the optional callback funciton will be triggered when initialization is complete.
+
 
 #### Parameters ####
 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
 | *settings* | table | Yes | A table with the configuration settings. See below. |
-| *cb* | function | No | Function that is triggered when initialization is complete. |
+| *callback* | function | No | Function that is triggered when initialization is complete. The *callback* function takes one required parameter that contains an error string if an error was encountered while initializing otherwise the parameter will be `null`. |
 
 ##### Settings Table #####
 
@@ -71,8 +72,13 @@ local settings = {
     "battType"     : MAX17055_BATT_TYPE.LiCoO2
 }
 
-fuelGauge.init(settings, function() {
-    server.log("Fuel gauge initialized.");
+fuelGauge.init(settings, function(err) {
+    if (err != null) {
+        server.error(err);
+    } else {
+        server.log("Fuel gauge initialized.");
+        // Start using fuel gauge.
+    }
 });
 ```
 
