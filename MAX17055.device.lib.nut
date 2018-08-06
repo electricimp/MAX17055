@@ -106,7 +106,7 @@ class MAX17055 {
         }
 
         // Set Register Standard Resolution vars (these are based on resistor value)
-        _setLSBSize(settings.senseRes);
+        _setLSBScalr(settings.senseRes);
 
         // Get POR bit in status register (bit 1)
         local status = _readReg(MAX17055_STATUS_REG, false);
@@ -315,7 +315,7 @@ class MAX17055 {
         _writeReg(MAX17055_I_ALRT_TH_REG, MAX17055_TEMP_CURR_DEFAULT_THRESH);
     }
 
-    function _setLSBSize(res) {
+    function _setLSBScalr(res) {
         // Register values calculated based on (datasheet table 6)
         // ModelGauge Register Standard Resolutions Table
         // Capacity 5.0μVH/ R_SENSE, Current 1.5625μV/R_SENSE
