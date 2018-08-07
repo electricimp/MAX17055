@@ -112,7 +112,7 @@ class MAX17055 {
         local status = _readReg(MAX17055_STATUS_REG, false);
         if (status == null) {
             return _handleErr(format("Error reading reg: 0x%02X Err: %i", MAX17055_STATUS_REG, _i2c.readerror()), cb);
-        } else if ((status & 0x0002) == 2) {
+        } else if (status & 0x0002) {
             // Get DNR (data not ready) bit in status register (bit 0) - may take (710ms from powerup)
             _regReady(MAX17055_F_STAT_REG, 0x0001, 0, function(error) {
                 // Pass error to callback if we don't get expected value after multiple re-checks
@@ -269,11 +269,11 @@ class MAX17055 {
     function getAlertStatus() {
         local status = _readReg(MAX17055_STATUS_REG);
         return {
-            "powerOnReset"              : ((status & 0x0002) == 0x0002),
-            "battRemovalDetected"       : ((status & 0x8000) == 0x8000),
-            "battInsertDetected"        : ((status & 0x0800) == 0x0800),
-            "battAbsent"                : ((status & 0x0008) == 0x0008),
-            "chargeStatePercentChange"  : ((status & 0x0080) == 0x0080)
+            "powerOnReset"              : (status & 0x0002),
+            "battRemovalDetected"       : (status & 0x8000),
+            "battInsertDetected"        : (status & 0x0800),
+            "battAbsent"                : (status & 0x0008),
+            "chargeStatePercentChange"  : (status & 0x0080)
         };
     }
 
