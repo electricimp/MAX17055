@@ -4,7 +4,7 @@ The MAX17055 is a low power 7μA operating current fuel gauge IC that implements
 
 **To add this library to your project, add the following to the top of your device code:**
 
-`#require "MAX170555.lib.nut:1.0.0"`
+`#require "MAX17055.device.lib.nut:1.0.0"`
 
 ## Class Usage ##
 
