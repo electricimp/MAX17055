@@ -1,6 +1,6 @@
-# MAX170555 #
+# MAX17055 #
 
-The MAX17055 is a low power 7μA operating current fuel gauge IC that implements Maxim ModelGauge m5 EZ algorithm. It measures voltage, current, and temperature to produce fuel gauge results.
+The MAX17055 is a low power fuel gauge IC that implements Maxim ModelGauge m5 EZ algorithm. It measures voltage, current, and temperature to produce fuel gauge results. Typical power consumption is 7μA.
 
 **To add this library to your project, add the following to the top of your device code:**
 
