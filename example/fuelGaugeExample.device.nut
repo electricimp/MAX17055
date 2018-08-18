@@ -16,7 +16,7 @@ settings <- {
     "chrgTerm"     : 20,   // mA
     "emptyVTarget" : 3.3,  // V
     "recoveryV"    : 3.88, // V
-    "chrgV"        : MAX17055_V_CHRG_4_4_OR_4_35,
+    "chrgV"        : MAX17055_V_CHRG_4_2,
     "battType"     : MAX17055_BATT_TYPE.LiCoO2
 }
 

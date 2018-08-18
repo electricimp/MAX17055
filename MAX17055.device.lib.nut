@@ -158,7 +158,7 @@ class MAX17055 {
                 }
 
                 // Wait for refresh bit to clear (bit 15)
-                _regReady(MAX17055_MODEL_CFG_REG, 0x1000, 0, function(er) {
+                _regReady(MAX17055_MODEL_CFG_REG, 0x8000, 0, function(er) {
                     // Pass error to callback if we don't get expected value after multiple re-checks
                     if (er) return _handleErr(er, cb);
                     try {
@@ -320,7 +320,7 @@ class MAX17055 {
         // ModelGauge Register Standard Resolutions Table
         // Capacity 5.0μVH/ R_SENSE, Current 1.5625μV/R_SENSE
 
-        // Convert from micro to milli
+        // Convert from ohms to milli
         local res = res * 1000;
         // LSB vals in millis
         _capacityLSB = (5.0 / res);
