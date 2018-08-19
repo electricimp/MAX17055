@@ -4,11 +4,7 @@ The MAX17055 is a low power fuel gauge IC that implements Maxim ModelGauge m5 EZ
 
 **To add this library to your project, add the following to the top of your device code:**
 
-<<<<<<< HEAD
-`#require "MAX170555.lib.nut:1.0.1"`
-=======
-`#require "MAX17055.device.lib.nut:1.0.0"`
->>>>>>> e06a46af4b66678eeefe729b264fa3276ab28fda
+`#require "MAX17055.device.lib.nut:1.0.1"`
 
 ## Class Usage ##
 

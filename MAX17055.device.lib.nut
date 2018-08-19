@@ -246,7 +246,7 @@ class MAX17055 {
         // ModelGauge Register Standard Resolutions Table
         // Percent 1/256%, Capacity 5.0μVH/ R_SENSE
         local percent  = _readReg(MAX17055_REP_SOC_REG);
-        percent /= 256;
+        percent /= 256.0;
         local capacity = _readReg(MAX17055_REP_CAP_REG);
         capacity = _twosComp(capacity);
         // Convert to mAh
