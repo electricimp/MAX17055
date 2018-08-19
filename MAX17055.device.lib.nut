@@ -46,7 +46,7 @@ const MAX17055_DQ_ACC_REG             = 0x45;
 const MAX17055_DP_ACC_REG             = 0x46;
 const MAX17055_SOFT_WAKE_CMD_REG      = 0x60;
 const MAX17055_I_ALRT_TH_REG          = 0xB4;
-const MAX17055_HIB_CGF_REG            = 0xBA;
+const MAX17055_HIB_CFG_REG            = 0xBA;
 const MAX17055_CONFIG_2_REG           = 0xBB;
 const MAX17055_MODEL_CFG_REG          = 0xDB;
 
@@ -123,15 +123,15 @@ class MAX17055 {
                 // Catch any i2c read/write errors
                 try {
                     // Store Hibernate Configuration
-                    hibCfg = _readReg(MAX17055_HIB_CGF_REG);
+                    hibCfg = _readReg(MAX17055_HIB_CFG_REG);
 
                     // Exit Hibernate mode
                     _writeReg(MAX17055_SOFT_WAKE_CMD_REG, MAX17055_SOFT_WAKE_CMD_WAKE);
-                    _writeReg(MAX17055_HIB_CGF_REG, MAX17055_HIBERNATE_CMD_CLEAR);
+                    _writeReg(MAX17055_HIB_CFG_REG, MAX17055_HIBERNATE_CMD_CLEAR);
                     _writeReg(MAX17055_SOFT_WAKE_CMD_REG, MAX17055_SOFT_WAKE_CMD_CLEAR);
 
                     // Set Battery Config - these must be passed in
-                    local desCap = (settings.desCap * _capacityLSB).tointeger();
+                    local desCap = (settings.desCap / _capacityLSB).tointeger();
 
                     _writeReg(MAX17055_DESIGN_CAP_REG, desCap);
                     _writeReg(MAX17055_DQ_ACC_REG, (desCap / 32));
@@ -163,7 +163,7 @@ class MAX17055 {
                     if (er) return _handleErr(er, cb);
                     try {
                         // Reset original values of Hibernate Configuration
-                        _writeReg(MAX17055_HIB_CGF_REG, hibCfg);
+                        _writeReg(MAX17055_HIB_CFG_REG, hibCfg);
                         // Clear POR aler bit
                         _writeVerify(MAX17055_STATUS_REG, 0xFFFD, cb);
                     } catch(e) {
@@ -409,11 +409,7 @@ class MAX17055 {
     }
 
     function _twosComp(value) {
-        if (value & 0x8000) {
-            value = ~(value & 0x7FFF) + 1;
-            return -1 * (value & 0x7FFF);
-        }
-        return value;
+        return (value << 16) >> 16;
     }
 
 }
