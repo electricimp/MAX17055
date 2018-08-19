@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright 2015-2017 Electric Imp
+// Copyright 2018 Electric Imp
 //
 // SPDX-License-Identifier: MIT
 //
@@ -75,7 +75,7 @@ enum MAX17055_BATT_TYPE {
 
 class MAX17055 {
 
-    static VERSION = "1.0.0";
+    static VERSION = "1.0.1";
 
     _i2c  = null;
     _addr = null;

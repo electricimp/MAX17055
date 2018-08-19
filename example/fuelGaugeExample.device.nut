@@ -1,4 +1,4 @@
-#require "MAX17055.device.lib.nut:1.0.0"
+#require "MAX17055.device.lib.nut:1.0.1"
 
 server.log("Device running....")
 server.log("---------------------");
