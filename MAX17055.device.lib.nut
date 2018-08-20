@@ -358,10 +358,11 @@ class MAX17055 {
     }
 
     function _verify(reg, value, next) {
+        local actual;
         try {
             _writeReg(reg, value);
             imp.sleep(MAX17055_REG_VERIFY_TIMEOUT_SEC);
-            local actual = _readReg(reg);
+            actual = _readReg(reg);
         } catch (err) {
             return _handleErr(error, next);
         }
