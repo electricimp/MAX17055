@@ -1,6 +1,6 @@
 # MAX17055 #
 
-The MAX17055 is a low-power fuel-gauge IC that implements the [Maxim ModelGauge m5 EZ algorithm](https://www.maximintegrated.com/en/design/partners-and-technology/design-technology/modelgauge-battery-fuel-gauge-technology.html). It measures battery voltage, current and temperature to produce fuel gauge results. Its typical power consumption is 7μA.
+The [MAX17055](https://datasheets.maximintegrated.com/en/ds/MAX17055.pdf) is a low-power fuel-gauge IC that implements the [Maxim ModelGauge m5 EZ algorithm](https://www.maximintegrated.com/en/design/partners-and-technology/design-technology/modelgauge-battery-fuel-gauge-technology.html). It measures battery voltage, current and temperature to produce fuel gauge results. Its typical power consumption is 7μA.
 
 **To add this library to your project, add** `#require "MAX17055.device.lib.nut:1.0.1"` **to the top of your device code.**
 
@@ -116,7 +116,7 @@ server.log("Time til empty: " + tte + " hours");
 
 ### getTimeTilFull() ###
 
-This method returns the estimated time to full (TTF) for the battery under present conditions. The TTF value is determined by determining the constant current and constant voltage portions of the charge cycle based on experience of prior charge cycles. Time to full is then estimated by comparing present charge current to the charge termination current. Operation of the TTF register assumes all charge profiles are consistent in the application. 
+This method returns the estimated time to full (TTF) for the battery under present conditions. The TTF value is determined by determining the constant current and constant voltage portions of the charge cycle based on experience of prior charge cycles. Time to full is then estimated by comparing present charge current to the charge termination current. Operation of the TTF register assumes all charge profiles are consistent in the application.
 
 **Note** The battery may require a few charge cycles to pass before this call returns a non-default value.
 
