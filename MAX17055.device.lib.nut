@@ -215,7 +215,6 @@ class MAX17055 {
         return (ttf * 5.625 / 3600);
     }
 
-
     function getAvgCurrent() {
         // Register values calculated based on (datasheet table 6)
         // ModelGauge Register Standard Resolutions Table
@@ -337,7 +336,7 @@ class MAX17055 {
 
     function _regReady(reg, mask, expected, next) {
         local val = _readReg(reg, false);
-        if (val && (val & mask) == expected) {
+        if (val != null && (val & mask) == expected) {
             _regReadyCounter = 0;
             next(null);
         } else {
