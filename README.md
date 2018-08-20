@@ -40,7 +40,7 @@ This method initializes the fuel gauge. If a power on reset alert is detected, t
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
 | *settings* | Table | Yes | A table of configuration settings *(see below)* |
-| *callback* | Function | No | A function that will be triggered when initialization is complete. It has one (required) parameter of its own which will receive an error message string if an error was encountered during initializion, otherwise `null` |
+| *callback* | Function | No | A function that will be triggered when initialization is complete. It has one (required) parameter of its own which will receive an error message string if an error was encountered during initialization, otherwise `null` |
 
 #### Settings Table Options ####
 
