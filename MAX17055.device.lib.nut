@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright 2015-2017 Electric Imp
+// Copyright 2018 Electric Imp
 //
 // SPDX-License-Identifier: MIT
 //
@@ -46,7 +46,7 @@ const MAX17055_DQ_ACC_REG             = 0x45;
 const MAX17055_DP_ACC_REG             = 0x46;
 const MAX17055_SOFT_WAKE_CMD_REG      = 0x60;
 const MAX17055_I_ALRT_TH_REG          = 0xB4;
-const MAX17055_HIB_CGF_REG            = 0xBA;
+const MAX17055_HIB_CFG_REG            = 0xBA;
 const MAX17055_CONFIG_2_REG           = 0xBB;
 const MAX17055_MODEL_CFG_REG          = 0xDB;
 
@@ -75,7 +75,7 @@ enum MAX17055_BATT_TYPE {
 
 class MAX17055 {
 
-    static VERSION = "1.0.0";
+    static VERSION = "1.0.1";
 
     _i2c  = null;
     _addr = null;
@@ -123,15 +123,15 @@ class MAX17055 {
                 // Catch any i2c read/write errors
                 try {
                     // Store Hibernate Configuration
-                    hibCfg = _readReg(MAX17055_HIB_CGF_REG);
+                    hibCfg = _readReg(MAX17055_HIB_CFG_REG);
 
                     // Exit Hibernate mode
                     _writeReg(MAX17055_SOFT_WAKE_CMD_REG, MAX17055_SOFT_WAKE_CMD_WAKE);
-                    _writeReg(MAX17055_HIB_CGF_REG, MAX17055_HIBERNATE_CMD_CLEAR);
+                    _writeReg(MAX17055_HIB_CFG_REG, MAX17055_HIBERNATE_CMD_CLEAR);
                     _writeReg(MAX17055_SOFT_WAKE_CMD_REG, MAX17055_SOFT_WAKE_CMD_CLEAR);
 
                     // Set Battery Config - these must be passed in
-                    local desCap = (settings.desCap * _capacityLSB).tointeger();
+                    local desCap = (settings.desCap / _capacityLSB).tointeger();
 
                     _writeReg(MAX17055_DESIGN_CAP_REG, desCap);
                     _writeReg(MAX17055_DQ_ACC_REG, (desCap / 32));
@@ -158,12 +158,12 @@ class MAX17055 {
                 }
 
                 // Wait for refresh bit to clear (bit 15)
-                _regReady(MAX17055_MODEL_CFG_REG, 0x1000, 0, function(er) {
+                _regReady(MAX17055_MODEL_CFG_REG, 0x8000, 0, function(er) {
                     // Pass error to callback if we don't get expected value after multiple re-checks
                     if (er) return _handleErr(er, cb);
                     try {
                         // Reset original values of Hibernate Configuration
-                        _writeReg(MAX17055_HIB_CGF_REG, hibCfg);
+                        _writeReg(MAX17055_HIB_CFG_REG, hibCfg);
                         // Clear POR aler bit
                         _writeVerify(MAX17055_STATUS_REG, 0xFFFD, cb);
                     } catch(e) {
@@ -215,7 +215,6 @@ class MAX17055 {
         return (ttf * 5.625 / 3600);
     }
 
-
     function getAvgCurrent() {
         // Register values calculated based on (datasheet table 6)
         // ModelGauge Register Standard Resolutions Table
@@ -246,7 +245,7 @@ class MAX17055 {
         // ModelGauge Register Standard Resolutions Table
         // Percent 1/256%, Capacity 5.0μVH/ R_SENSE
         local percent  = _readReg(MAX17055_REP_SOC_REG);
-        percent /= 256;
+        percent /= 256.0;
         local capacity = _readReg(MAX17055_REP_CAP_REG);
         capacity = _twosComp(capacity);
         // Convert to mAh
@@ -320,7 +319,7 @@ class MAX17055 {
         // ModelGauge Register Standard Resolutions Table
         // Capacity 5.0μVH/ R_SENSE, Current 1.5625μV/R_SENSE
 
-        // Convert from micro to milli
+        // Convert from ohms to milli
         local res = res * 1000;
         // LSB vals in millis
         _capacityLSB = (5.0 / res);
@@ -337,7 +336,7 @@ class MAX17055 {
 
     function _regReady(reg, mask, expected, next) {
         local val = _readReg(reg, false);
-        if (val && (val & mask) == expected) {
+        if (val != null && (val & mask) == expected) {
             _regReadyCounter = 0;
             next(null);
         } else {
@@ -359,10 +358,11 @@ class MAX17055 {
     }
 
     function _verify(reg, value, next) {
+        local actual;
         try {
             _writeReg(reg, value);
             imp.sleep(MAX17055_REG_VERIFY_TIMEOUT_SEC);
-            local actual = _readReg(reg);
+            actual = _readReg(reg);
         } catch (err) {
             return _handleErr(error, next);
         }
@@ -409,11 +409,7 @@ class MAX17055 {
     }
 
     function _twosComp(value) {
-        if (value & 0x8000) {
-            value = ~(value & 0x7FFF) + 1;
-            return -1 * (value & 0x7FFF);
-        }
-        return value;
+        return (value << 16) >> 16;
     }
 
 }
