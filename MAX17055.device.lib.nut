@@ -80,10 +80,9 @@ class MAX17055 {
     _i2c  = null;
     _addr = null;
 
-    _capacityLSB = null;
-    _currLSB = null;
-
-    _regReadyCounter = 0;
+    _capacityLSB        = null;
+    _currLSB            = null;
+    _regReadyCounter    = 0;
     _writeVerifyCounter = 0;
 
     constructor(i2c, addr = null) {
@@ -291,17 +290,17 @@ class MAX17055 {
         if ("enBattInsert" in alerts) {
             // Config bit 1
             local bit = 1;
-            config = (alerts.enBattRemove) ? (config | (0x01 << bit)) : (config & ~(0x01 << bit));
+            config = (alerts.enBattInsert) ? (config | (0x01 << bit)) : (config & ~(0x01 << bit));
         }
         if ("enAlertPin" in alerts) {
             // Config bit 2
             local bit = 2;
-            config = (alerts.enBattRemove) ? (config | (0x01 << bit)) : (config & ~(0x01 << bit));
+            config = (alerts.enAlertPin) ? (config | (0x01 << bit)) : (config & ~(0x01 << bit));
         }
         if ("enChargeStatePercentChange" in alerts) {
             // Config2 bit 7
             local bit = 7
-            config2 = (alerts.enBattRemove) ? (config2 | (0x01 << bit)) : (config2 & ~(0x01 << bit));
+            config2 = (alerts.enChargeStatePercentChange) ? (config2 | (0x01 << bit)) : (config2 & ~(0x01 << bit));
         }
         _writeReg(MAX17055_CONFIG_REG, config);
         _writeReg(MAX17055_CONFIG_2_REG, config2);
