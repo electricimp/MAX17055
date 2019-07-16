@@ -345,7 +345,8 @@ class MAX17055 {
                 }.bindenv(this))
             } else {
                 _regReadyCounter = 0;
-                next(format("Error reading reg: 0x%02X Err: %i", reg, _i2c.readerror()));
+                local err = (val == null) ? format("Err: %i", _i2c.readerror()) : "Err: reg bit not ready.";
+                next(format("Error reading reg: 0x%02X %s", reg, err));
             }
         }
     }

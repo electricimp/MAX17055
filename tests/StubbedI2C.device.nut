@@ -54,7 +54,8 @@ class StubbedI2C {
             local data = _readResp[devAddr][regAddr];
             return data;
         } else {
-            _error = "No data at device address register in read buffer.";
+            // Make up an integer that means "No data at device address register in read buffer."
+            _error = -100;
         }
 
         return null;
