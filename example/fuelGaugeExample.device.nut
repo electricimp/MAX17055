@@ -1,3 +1,4 @@
+#require "BQ25895.device.lib.nut:3.0.0"
 #require "MAX17055.device.lib.nut:1.0.2"
 
 server.log("Device running....")
@@ -9,8 +10,11 @@ server.log(imp.getsoftwareversion());
 i2c <- hardware.i2cKL;
 i2c.configure(CLOCK_SPEED_400_KHZ);
 
-fuelGaugeReady <- false;
+// Initialize Libraries
+batteryCharger <- BQ25895(i2c);
 fuelGauge <- MAX17055(i2c);
+// Configure Battery Charger to default BQ25895 settings 4.208V, 2048mA.
+batteryCharger.enable();
 
 // Fuel gauge settings for a 2000mAh battery
 settings <- {
@@ -87,7 +91,6 @@ function initHandler(err) {
         server.log("Fuel gauge init error: " + err);
     } else {
         server.log("Fuel gauge initialized.");
-        fuelGaugeReady = true;
 
         // Enable/Disable alerts
         fuelGauge.enableAlerts(alerts);
