@@ -22,6 +22,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
+// Test Hardware: impC001 Breakout board with 3.7V 2000mAh LiIon battery
 class ManualTests extends ImpTestCase {
 
     _i2c = null;
@@ -33,10 +34,63 @@ class ManualTests extends ImpTestCase {
         _i2c.configure(CLOCK_SPEED_400_KHZ);
         _fg = MAX17055(_i2c);
         // initialize here (async blocking)
-        return "Manual test setup complete.";
+        return Promise(function(resolve, reject) {
+            local settings = {
+                "desCap"       : 2000, // mAh
+                "senseRes"     : 0.01, // ohms
+                "chrgTerm"     : 20,   // mA
+                "emptyVTarget" : 3.3,  // V
+                "recoveryV"    : 3.88, // V
+                "chrgV"        : MAX17055_V_CHRG_4_2,
+                "battType"     : MAX17055_BATT_TYPE.LiCoO2
+            }
+            _fg.init(settings, function(err) {
+                return (err) ? reject("Manual setup failed. Fuel gauge init failed with error: " + err) : resolve("Manual test setup complete.");
+            }.bindenv(this))
+        }.bindenv(this))
     }  
+    
+    function testGetVoltage() {
+        local v = _fg.getVoltage();
+        assertBetween(v, 3.5, 4.2, "Voltage not in range: " + v + "V");
 
-    // test basics - voltage, current, temp, dev rev, soc
+        return "Get voltage test complete";
+    }
+
+    function testGetCurrent() {
+        local curr = _fg.getCurrent();
+        assertBetween(curr, -2000, 2000, "Current not in range: " + curr + "mA");
+
+        return "Get current test complete";
+    }
+
+    function testGetTemp() {
+        local temp = _fg.getTemperature();
+        assertBetween(temp, 0, 40, "Temp not in range: " + temp + "°C");
+
+        return "Get temperature test complete";
+    }
+
+    function testGetDevRev() {
+        local actual = _fg.getDeviceRev();
+        local expected = 0x4010;
+        assertEqual(expected, actual, "Unexpected device rev: " + actual);
+
+        return "Get device rev test complete";
+    }
+
+    function testGetSOC() {
+        local soc = _fg.getStateOfCharge();
+
+        assertTrue("percent" in soc, "State of charge missing percent key");
+        assertTrue("capacity" in soc, "State of charge missing capacity key");
+
+        // actual, from, to, msg
+        assertBetween(soc.capacity, 0, 2100, "SOC capacity not in range: " + soc.capacity + "mAh");
+        assertBetween(soc.percent, 0, 120, "SOC percent not in range: " + soc.percent + "%");
+
+        return "State or charge test complete";
+    }
 
     function tearDown() {
         return "Manual tests finished.";
