@@ -32,8 +32,11 @@ class ManualTests extends ImpTestCase {
         _i2c = hardware.i2cKL;
         _i2c.configure(CLOCK_SPEED_400_KHZ);
         _fg = MAX17055(_i2c);
+        // initialize here (async blocking)
         return "Manual test setup complete.";
     }  
+
+    // test basics - voltage, current, temp, dev rev, soc
 
     function tearDown() {
         return "Manual tests finished.";

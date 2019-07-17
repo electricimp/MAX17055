@@ -33,6 +33,7 @@ class StubbedHardwareTests extends ImpTestCase {
         // Clear all buffers
         _i2c._clearWriteBuffer();
         _i2c._clearReadResp();
+        _i2c._clearWriteWatcher();
     }
 
     function setUp() {
@@ -52,10 +53,6 @@ class StubbedHardwareTests extends ImpTestCase {
         local _fg = MAX17055(_i2c, customAddr);
         assertEqual(customAddr, _fg._addr, "Non default i2c address did not match expected");
         return "Constructor optional params test complete.";
-    }
-
-    function tearDown() {
-        return "Stubbed hardware tests finished.";
     }
 
     function testInitBadParamsAsync() {
@@ -114,6 +111,7 @@ class StubbedHardwareTests extends ImpTestCase {
                 local expectedErr = format("Error reading reg: 0x%02X Err: %i", MAX17055_STATUS_REG, -100);
                 assertEqual(err, expectedErr, "Status bit i2c error in init did not create expected error");
 
+                _cleari2cBuffers();
                 return resolve("Init with status i2c error passed expected error to callback");
             }.bindenv(this))
         }.bindenv(this))
@@ -129,7 +127,7 @@ class StubbedHardwareTests extends ImpTestCase {
         // Don't set any read data for MAX17055_F_STAT_REG to cause error
         
         // Set readbuffer values
-        // MAX17055_V_CELL_REG to 0x0200 (lib always reads 2 bytes, and flips the bytes)
+        // MAX17055_STATUS_REG to 0x0200 (lib always reads 2 bytes, and flips the bytes)
         _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_STATUS_REG.tochar(), "\x02\x00");
 
         return Promise(function(resolve, reject) {
@@ -147,6 +145,7 @@ class StubbedHardwareTests extends ImpTestCase {
                 local expectedErr = format("Error reading reg: 0x%02X Err: %i", MAX17055_F_STAT_REG, -100);
                 assertEqual(err, expectedErr, "POR i2c error in init did not create expected error");
 
+                _cleari2cBuffers();
                 return resolve("Init with POR i2c error passed expected error to callback");
             }.bindenv(this))
         }.bindenv(this))
@@ -162,7 +161,7 @@ class StubbedHardwareTests extends ImpTestCase {
         // Set MAX17055_F_STAT_REG to not ready state to cause error
         
         // Set readbuffer values
-        // MAX17055_V_CELL_REG to 0x0200 (lib always reads 2 bytes, and flips the bytes)
+        // MAX17055_STATUS_REG to 0x0200 (lib always reads 2 bytes, and flips the bytes)
         _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_STATUS_REG.tochar(), "\x02\x00");
         // MAX17055_F_STAT_REG to 0xFFFF (lib always reads 2 bytes, and flips the bytes)
         _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_F_STAT_REG.tochar(), "\xFF\xFF");
@@ -182,6 +181,7 @@ class StubbedHardwareTests extends ImpTestCase {
                 local expectedErr = format("Error reading reg: 0x%02X Err: reg bit not ready.", MAX17055_F_STAT_REG);
                 assertEqual(err, expectedErr, "DNR bit not ready error in init did not create expected error");
 
+                _cleari2cBuffers();
                 return resolve("Init with DNR bit not ready passed expected error to callback");
             }.bindenv(this))
         }.bindenv(this))
@@ -197,7 +197,7 @@ class StubbedHardwareTests extends ImpTestCase {
         // Don't set any read data for MAX17055_HIB_CFG_REG to cause error
         
         // Set readbuffer values
-        // MAX17055_V_CELL_REG to 0x0200 (lib always reads 2 bytes, and flips the bytes)
+        // MAX17055_STATUS_REG to 0x0200 (lib always reads 2 bytes, and flips the bytes)
         _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_STATUS_REG.tochar(), "\x02\x00");
         // MAX17055_F_STAT_REG to 0x0000 (lib always reads 2 bytes, and flips the bytes)
         _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_F_STAT_REG.tochar(), "\x00\x00");
@@ -217,6 +217,7 @@ class StubbedHardwareTests extends ImpTestCase {
                 local expectedErr = format("Error reading reg: 0x%02X Err: %i", MAX17055_HIB_CFG_REG, -100);
                 assertEqual(err, expectedErr, "Hibernate configuration i2c error in init did not create expected error");
 
+                _cleari2cBuffers();
                 return resolve("Init hibernate configuration i2c error passed expected error to callback");
             }.bindenv(this))
         }.bindenv(this))
@@ -232,7 +233,7 @@ class StubbedHardwareTests extends ImpTestCase {
         // Don't set any read data for MAX17055_MODEL_CFG_REG to cause error
         
         // Set readbuffer values
-        // MAX17055_V_CELL_REG to 0x0200 (lib always reads 2 bytes, and flips the bytes)
+        // MAX17055_STATUS_REG to 0x0200 (lib always reads 2 bytes, and flips the bytes)
         _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_STATUS_REG.tochar(), "\x02\x00");
         // MAX17055_F_STAT_REG to 0x0000 (lib always reads 2 bytes, and flips the bytes)
         _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_F_STAT_REG.tochar(), "\x00\x00");
@@ -254,6 +255,7 @@ class StubbedHardwareTests extends ImpTestCase {
                 local expectedErr = format("Error reading reg: 0x%02X Err: %i", MAX17055_MODEL_CFG_REG, -100);
                 assertEqual(err, expectedErr, "POR i2c error in init did not create expected error");
 
+                _cleari2cBuffers();
                 return resolve("Init with POR i2c error passed expected error to callback");
             }.bindenv(this))
         }.bindenv(this))
@@ -268,7 +270,7 @@ class StubbedHardwareTests extends ImpTestCase {
         // Test that i2c error bubbles up when MAX17055_MODEL_CFG_REG times out, never reaches ready state
         
         // Set readbuffer values
-        // MAX17055_V_CELL_REG to 0x0200 (lib always reads 2 bytes, and flips the bytes)
+        // MAX17055_STATUS_REG to 0x0200 (lib always reads 2 bytes, and flips the bytes)
         _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_STATUS_REG.tochar(), "\x02\x00");
         // MAX17055_F_STAT_REG to 0x0000 (lib always reads 2 bytes, and flips the bytes)
         _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_F_STAT_REG.tochar(), "\x00\x00");
@@ -292,23 +294,204 @@ class StubbedHardwareTests extends ImpTestCase {
                 local expectedErr = format("Error reading reg: 0x%02X Err: reg bit not ready.", MAX17055_MODEL_CFG_REG);
                 assertEqual(err, expectedErr, "Model config i2c error in init did not create expected error");
 
+                _cleari2cBuffers();
                 return resolve("Init with Model config i2c error passed expected error to callback");
             }.bindenv(this))
         }.bindenv(this))
     }
 
-    // Init tests
+    function testInitHibCfgVerify1Fail() {
+        // Note: Limitation of stubbed class, all read values are set before method is called, if inside the 
+        // method a value is updated and read again (ie set reg bit called on the same register 2X) the second
+        // read will not reflect the updates made by the setter inside the function.
+        _cleari2cBuffers();
 
-    // Failures 
-        // MAX17055_HIB_CFG_REG write verify fails
-            // try/catch causes error (clear value for MAX17055_STATUS_REG, so read fails here);
-            // read MAX17055_STATUS_REG, mask 0xFFFD, 2x+ verify that after the write that the values match
-            // TODO - look into testing _writeVerify/_verify method by it's self
+        // Test that _writeVerify error bubbles up i2c when MAX17055_STATUS_REG
+        
+        // Set readbuffer values
+        // MAX17055_STATUS_REG to 0x0200 (lib always reads 2 bytes, and flips the bytes)
+        _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_STATUS_REG.tochar(), "\x02\x00");
+        // MAX17055_F_STAT_REG to 0xFFFF (lib always reads 2 bytes, and flips the bytes)
+        _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_F_STAT_REG.tochar(), "\xFF\xFF");
+        // MAX17055_HIB_CFG_REG to 0xFFFF (lib always reads 2 bytes, and flips the bytes)
+        _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_HIB_CFG_REG.tochar(), "\xFF\xFF");
+        // MAX17055_MODEL_CFG_REG to 0x0000 (lib always reads 2 bytes, and flips the bytes)
+        _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_MODEL_CFG_REG.tochar(), "\x00\x00");
 
-    // Successes
-        // status bit no need to initialize
-        // successfull init if status bit triggers init seq (check write buffer at end to see if it matches expected)
+        return Promise(function(resolve, reject) {
+            local settings = {
+            "desCap"       : 2000, // mAh
+            "senseRes"     : 0.01, // ohms
+            "chrgTerm"     : 20,   // mA
+            "emptyVTarget" : 3.3,  // V
+            "recoveryV"    : 3.88, // V
+            "chrgV"        : MAX17055_V_CHRG_4_2,
+            "battType"     : MAX17055_BATT_TYPE.LiCoO2
+            }
 
+            _fg.init(settings, function(err) {
+                local expectedErr = format("Error reading reg: 0x%02X Err: -100", MAX17055_STATUS_REG);
+                assertEqual(err, expectedErr, "Write/verify status reg i2c error in init did not create expected error");
+
+                _cleari2cBuffers();
+                return resolve("Init with write/verify status reg i2c error passed expected error to callback");
+            }.bindenv(this))
+            
+            // MAX17055_F_STAT_REG to 0x0000 (lib always reads 2 bytes, and flips the bytes)
+            _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_F_STAT_REG.tochar(), "\x00\x00");
+            // Delete MAX17055_STATUS_REG from read buffer to cause error in write/verify
+            if (MAX17055_STATUS_REG.tochar() in _i2c._readResp[MAX17055_DEFAULT_I2C_ADDR]) {
+                _i2c._readResp[MAX17055_DEFAULT_I2C_ADDR].rawdelete(MAX17055_STATUS_REG.tochar())
+            } 
+        }.bindenv(this))
+    }
+
+    function testInitHibCfgVerify2Fail() {
+        // Note: Limitation of stubbed class, all read values are set before method is called, if inside the 
+        // method a value is updated and read again (ie set reg bit called on the same register 2X) the second
+        // read will not reflect the updates made by the setter inside the function.
+        _cleari2cBuffers();
+
+        // Test that _writeVerify error bubbles up when MAX17055_STATUS_REG times out, never reaches ready state
+        
+        // Set readbuffer values
+        // MAX17055_STATUS_REG to 0x0200 (lib always reads 2 bytes, and flips the bytes)
+        _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_STATUS_REG.tochar(), "\x02\x00");
+        // MAX17055_F_STAT_REG to 0x0000 (lib always reads 2 bytes, and flips the bytes)
+        _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_F_STAT_REG.tochar(), "\x00\x00");
+        // MAX17055_HIB_CFG_REG to 0xFFFF (lib always reads 2 bytes, and flips the bytes)
+        _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_HIB_CFG_REG.tochar(), "\xFF\xFF");
+        // MAX17055_MODEL_CFG_REG to 0x0000 (lib always reads 2 bytes, and flips the bytes)
+        _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_MODEL_CFG_REG.tochar(), "\x00\x00");
+
+        return Promise(function(resolve, reject) {
+            local settings = {
+            "desCap"       : 2000, // mAh
+            "senseRes"     : 0.01, // ohms
+            "chrgTerm"     : 20,   // mA
+            "emptyVTarget" : 3.3,  // V
+            "recoveryV"    : 3.88, // V
+            "chrgV"        : MAX17055_V_CHRG_4_2,
+            "battType"     : MAX17055_BATT_TYPE.LiCoO2
+            }
+
+            _fg.init(settings, function(err) {
+                local expectedErr = format("Error write verify to reg: 0x%02X failed. Verification did not match write.", MAX17055_STATUS_REG);
+                assertEqual(err, expectedErr, "Write/verify status reg timeout error in init did not create expected error");
+
+                _cleari2cBuffers();
+                return resolve("Init with write/verify status reg timeout error passed expected error to callback");
+            }.bindenv(this))
+            
+        }.bindenv(this))
+    }
+
+    function testInitSuccess1() {
+        // Note: Limitation of stubbed class, all read values are set before method is called, if inside the 
+        // method a value is updated and read again (ie set reg bit called on the same register 2X) the second
+        // read will not reflect the updates made by the setter inside the function.
+        _cleari2cBuffers();
+
+        // POR Status bit set, no init needed flow
+        
+        // Set readbuffer values
+        // MAX17055_STATUS_REG to 0x0000 (lib always reads 2 bytes, and flips the bytes)
+        _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_STATUS_REG.tochar(), "\x00\x00");
+
+        return Promise(function(resolve, reject) {
+            local settings = {
+            "desCap"       : 2000, // mAh
+            "senseRes"     : 0.01, // ohms
+            "chrgTerm"     : 20,   // mA
+            "emptyVTarget" : 3.3,  // V
+            "recoveryV"    : 3.88, // V
+            "chrgV"        : MAX17055_V_CHRG_4_2,
+            "battType"     : MAX17055_BATT_TYPE.LiCoO2
+            }
+
+            _fg.init(settings, function(err) {
+                assertEqual(err, null, "Unexpected init error detected");
+
+                _cleari2cBuffers();
+                return resolve("Init successfull, no error passed to callback");
+            }.bindenv(this))
+        }.bindenv(this))
+    }
+
+    function testInitSuccess2() {
+        // Note: Limitation of stubbed class, all read values are set before method is called, if inside the 
+        // method a value is updated and read again (ie set reg bit called on the same register 2X) the second
+        // read will not reflect the updates made by the setter inside the function.
+        _cleari2cBuffers();
+
+        // POR Status bit not set, full init flow needed
+        local hibCfg = "\xFF\xFF";
+
+        // Set readbuffer values
+        // MAX17055_STATUS_REG to 0x0200 (lib always reads 2 bytes, and flips the bytes)
+        _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_STATUS_REG.tochar(), "\x02\x00");
+        // MAX17055_F_STAT_REG to 0x0000 (lib always reads 2 bytes, and flips the bytes)
+        _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_F_STAT_REG.tochar(), "\xFF\xFF");
+        // MAX17055_HIB_CFG_REG to 0xFFFF (lib always reads 2 bytes, and flips the bytes)
+        _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_HIB_CFG_REG.tochar(), hibCfg);
+        // MAX17055_MODEL_CFG_REG to 0x0000 (lib always reads 2 bytes, and flips the bytes)
+        _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_MODEL_CFG_REG.tochar(), "\xFF\xFF");
+
+        // Toggle read responses after i2c writes 
+        _i2c._setWriteWatcher(MAX17055_DEFAULT_I2C_ADDR, MAX17055_MODEL_CFG_REG.tochar(), function() {
+            // MAX17055_MODEL_CFG_REG to 0x0000 (lib always reads 2 bytes, and flips the bytes)
+            _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_MODEL_CFG_REG.tochar(), "\x00\x00");
+        }.bindenv(this));
+        _i2c._setWriteWatcher(MAX17055_DEFAULT_I2C_ADDR, MAX17055_HIB_CFG_REG.tochar(), function() {
+            // MAX17055_STATUS_REG to 0x0000 (lib always reads 2 bytes, and flips the bytes)
+            _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_STATUS_REG.tochar(), "\x00\x00");
+        }.bindenv(this));
+
+        return Promise(function(resolve, reject) {
+            local settings = {
+            "desCap"       : 2000, // mAh
+            "senseRes"     : 0.01, // ohms
+            "chrgTerm"     : 20,   // mA
+            "emptyVTarget" : 3.3,  // V
+            "recoveryV"    : 3.88, // V
+            "chrgV"        : MAX17055_V_CHRG_4_2,
+            "battType"     : MAX17055_BATT_TYPE.LiCoO2
+            }
+
+            _fg.init(settings, function(err) {
+                // Check class vars set to expected values
+                local exCapLSB  = 0.5;
+                local exCurrLSB = 0.15625;
+
+                // Check write buffer for all i2c writes
+                local exWB = MAX17055_SOFT_WAKE_CMD_REG.tochar() + "\x90\x00" +
+                             MAX17055_HIB_CFG_REG.tochar() + "\x00\x00" +
+                             MAX17055_SOFT_WAKE_CMD_REG.tochar() + "\x00\x00" +
+                             MAX17055_DESIGN_CAP_REG.tochar() + "\xA0\x0F" +
+                             MAX17055_DQ_ACC_REG.tochar() + "\x7D\x00" +
+                             MAX17055_I_CHR_TERM_REG.tochar() + "\x80\x00" +
+                             MAX17055_V_EMPTY_REG.tochar() + "\x61\xA5" + 
+                             MAX17055_DP_ACC_REG.tochar() + "\x63\x05" + 
+                             MAX17055_MODEL_CFG_REG.tochar() + "\x00\x80" + 
+                             MAX17055_HIB_CFG_REG.tochar() + hibCfg + 
+                             MAX17055_STATUS_REG.tochar() + "\x00\x00"; 
+
+                local wb = _i2c._getWriteBuffer(MAX17055_DEFAULT_I2C_ADDR);
+
+                assertEqual(format("%.1f", exCapLSB), format("%.1f", _fg._capacityLSB), format("Capacity LSB mismatch: expected %.1f, acutal %.1f", exCapLSB, _fg._capacityLSB));
+                assertEqual(format("%.5f", exCurrLSB), format("%.5f", _fg._currLSB), format("Current LSB mismatch: expected %.1f, acutal %.1f", exCurrLSB, _fg._currLSB));
+                assertEqual(exWB, wb, "Write buffer did not match expected write buffer.");
+
+                _cleari2cBuffers();
+                return resolve("Init success test passed");
+            }.bindenv(this))
+
+            // Toggle MAX17055_F_STAT_REG so _regReady goes through at least one check.
+            // MAX17055_F_STAT_REG to 0x0000 (lib always reads 2 bytes, and flips the bytes)
+            _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_F_STAT_REG.tochar(), "\x00\x00");
+        }.bindenv(this))
+    }
+    
     function testGetVoltage() {
         // Note: Limitation of stubbed class, all read values are set before method is called, if inside the 
         // method a value is updated and read again (ie set reg bit called on the same register 2X) the second
@@ -584,5 +767,9 @@ class StubbedHardwareTests extends ImpTestCase {
 
         _cleari2cBuffers();
         return "clearThresholds test passed";
+    }
+
+    function tearDown() {
+        return "Stubbed hardware tests finished.";
     }
 }

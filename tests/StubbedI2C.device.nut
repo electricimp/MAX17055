@@ -28,10 +28,12 @@ class StubbedI2C {
     _readResp    = null;
     _error       = null;
     _enabled     = null;
+    _watchers    = null;
 
     constructor() {
         _writeBuffer = {};
         _readResp    = {};
+        _watchers    = {};
         _error       = 0;
         _enabled     = false;
     }
@@ -79,6 +81,16 @@ class StubbedI2C {
             _writeBuffer[devAddr] <- regPlusData;
         }
 
+        if (devAddr in _watchers) {
+            local regAddr = regPlusData.slice(0, _watchers[devAddr]["regLen"]);
+            if (regAddr in _watchers[devAddr]) {
+                local cb = _watchers[devAddr][regAddr];
+                if (typeof cb == "function") imp.wakeup(0, function() {
+                    cb();
+                }.bindenv(this));
+            }
+        }
+
         // Return i2c error code 0: NO_ERROR, -13: NOT_ENABLED
         return (_enabled) ? 0 : -13;
     }
@@ -105,4 +117,18 @@ class StubbedI2C {
         _writeBuffer = {};
     }
 
+    function _setWriteWatcher(devAddr, regAddr, cb) {
+        if (devAddr in _watchers) {
+            _watchers[devAddr][regAddr] <- cb;
+        } else {
+            _watchers[devAddr] <- {
+                "regLen" : regAddr.len()
+            };
+            _watchers[devAddr][regAddr] <- cb;
+        }
+    }
+
+    function _clearWriteWatcher() {
+        _watchers = {};
+    }
 }
