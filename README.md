@@ -2,7 +2,7 @@
 
 The [MAX17055](https://datasheets.maximintegrated.com/en/ds/MAX17055.pdf) is a low-power fuel-gauge IC that implements the [Maxim ModelGauge m5 EZ algorithm](https://www.maximintegrated.com/en/design/partners-and-technology/design-technology/modelgauge-battery-fuel-gauge-technology.html). It measures battery voltage, current and temperature to produce fuel gauge results. Its typical power consumption is 7μA.
 
-**To add this library to your project, add** `#require "MAX17055.device.lib.nut:1.0.1"` **to the top of your device code.**
+**To add this library to your project, add** `#require "MAX17055.device.lib.nut:1.0.2"` **to the top of your device code.**
 
 ## Class Usage ##
 
@@ -22,7 +22,7 @@ Nothing.
 #### Example ####
 
 ```squirrel
-#require "MAX17055.device.lib.nut:1.0.1"
+#require "MAX17055.device.lib.nut:1.0.2"
 
 local i2c = hardware.i2cKL;
 i2c.configure(CLOCK_SPEED_400_KHZ);

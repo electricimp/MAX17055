@@ -75,19 +75,22 @@ enum MAX17055_BATT_TYPE {
 
 class MAX17055 {
 
-    static VERSION = "1.0.1";
+    static VERSION = "1.0.2";
 
     _i2c  = null;
     _addr = null;
 
     _capacityLSB        = null;
     _currLSB            = null;
-    _regReadyCounter    = 0;
-    _writeVerifyCounter = 0;
+    _regReadyCounter    = null;
+    _writeVerifyCounter = null;
 
     constructor(i2c, addr = null) {
         _i2c = i2c;
         _addr = (addr == null) ? MAX17055_DEFAULT_I2C_ADDR : addr;
+        
+        _regReadyCounter    = 0;
+        _writeVerifyCounter = 0;
     }
 
     // Currently only supports (EZ config not INI file, all calculations taken from software implementaion guide)
