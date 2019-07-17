@@ -74,6 +74,9 @@ class StubbedI2C {
 
     // Just accept write data, and return i2c error code
     function write(devAddr, regPlusData) {
+        // Return i2c error code -13: NOT_ENABLED 
+        if (!_enabled) return -13;
+
         if (devAddr in _writeBuffer) {
             local data = _writeBuffer[devAddr];
             _writeBuffer[devAddr] = data + regPlusData;
@@ -85,14 +88,14 @@ class StubbedI2C {
             local regAddr = regPlusData.slice(0, _watchers[devAddr]["regLen"]);
             if (regAddr in _watchers[devAddr]) {
                 local cb = _watchers[devAddr][regAddr];
-                if (typeof cb == "function") imp.wakeup(0, function() {
-                    cb();
-                }.bindenv(this));
+                // NOTE: Keep sync so, if callback contains read buffer
+                // updates they are set before the code continues 
+                if (typeof cb == "function") cb();
             }
         }
 
-        // Return i2c error code 0: NO_ERROR, -13: NOT_ENABLED
-        return (_enabled) ? 0 : -13;
+        // Return i2c error code 0: NO_ERROR
+        return 0;
     }
 
     // Store read response in a table
