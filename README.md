@@ -251,14 +251,14 @@ Table &mdash; Contains the following keys:
 | --- | --- | --- |
 | *powerOnReset* | Boolean | `true` when the system detects that a software or hardware power on reset event has occurred |
 | *chargeStatePercentChange* | Boolean | When detection is enabled, this is `true` whenever the charge percentage crosses an integer percentage boundary, such as 50.0%, 51.0%, etc. This flag must be cleared to detect next event |
-| *raw* | Integer | Raw status register value. For debugging purposes | 
+| *raw* | Integer | Raw status register value for debugging purposes | 
 
 #### Example ####
 
 ```squirrel
 local status = fuelGauge.getAlertStatus();
 foreach (alert, state in status) {
-  if (state && alert !== "raw") server.log("Alert detected: " + alert);
+  if (state && alert != "raw") server.log("Alert detected: " + alert);
 }
 ```
 

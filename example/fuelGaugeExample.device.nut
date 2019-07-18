@@ -38,7 +38,7 @@ function checkAlertStatus() {
     local status = fuelGauge.getAlertStatus();
     local alertDetected = false;
     foreach (alert, state in status) {
-        if (state && alert !== "raw") {
+        if (state && alert != "raw") {
             alertDetected = true;
             server.log("Alert detected: " + alert);
         }
