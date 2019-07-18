@@ -693,10 +693,8 @@ class StubbedHardwareTests extends ImpTestCase {
         local status = _fg.getAlertStatus();
         local failMsg = "getAlertStatus test failed %s did not match expected";
         assertTrue(status.powerOnReset, format(failMsg, "powerOnReset"));
-        assertTrue(status.battRemovalDetected, format(failMsg, "battRemovalDetected"));
-        assertTrue(status.battInsertDetected, format(failMsg, "battInsertDetected"));
-        assertTrue(status.battAbsent, format(failMsg, "battAbsent"));
         assertTrue(status.chargeStatePercentChange, format(failMsg, "chargeStatePercentChange"));
+        assertTrue(status.raw, format(failMsg, "raw"));
 
         _cleari2cBuffers();
         return "getAlertStatus test passed";
@@ -728,18 +726,16 @@ class StubbedHardwareTests extends ImpTestCase {
         // Set readbuffer values
         // MAX17055_CONFIG_REG to 0xF9FF (0,1,2) (lib always reads 2 bytes, and flips the bytes)
         // MAX17055_CONFIG_2_REG to 0x7FFF (7) (lib always reads 2 bytes, and flips the bytes)
-        _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_CONFIG_REG.tochar(), "\xF9\xFF");
+        _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_CONFIG_REG.tochar(), "\xFD\xFF");
         _i2c._setReadResp(MAX17055_DEFAULT_I2C_ADDR, MAX17055_CONFIG_2_REG.tochar(), "\x7F\xFF");
         
         _fg.enableAlerts({
-            "enBattRemove" : false,
-            "enBattInsert" : true,
             "enAlertPin" : false,
             "enChargeStatePercentChange" : true
         });
 
         // Get Write Buffer 
-        local expWB = MAX17055_CONFIG_REG.tochar() + "\xFA\xFF" + MAX17055_CONFIG_2_REG.tochar() + "\xFF\xFF";
+        local expWB = MAX17055_CONFIG_REG.tochar() + "\xF9\xFF" + MAX17055_CONFIG_2_REG.tochar() + "\xFF\xFF";
         local wb = _i2c._getWriteBuffer(MAX17055_DEFAULT_I2C_ADDR);
 
         assertEqual(expWB, wb, "enableAlerts write buffer did not match expected");

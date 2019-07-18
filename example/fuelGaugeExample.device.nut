@@ -30,8 +30,6 @@ settings <- {
 // Alert settings
 alerts <- {
     "enAlertPin"   : false,
-    "enBattRemove" : true,
-    "enBattInsert" : true,
     "enChargeStatePercentChange" : true
 }
 
@@ -40,7 +38,7 @@ function checkAlertStatus() {
     local status = fuelGauge.getAlertStatus();
     local alertDetected = false;
     foreach (alert, state in status) {
-        if (state) {
+        if (state && alert !== "raw") {
             alertDetected = true;
             server.log("Alert detected: " + alert);
         }

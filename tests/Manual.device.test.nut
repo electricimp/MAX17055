@@ -52,7 +52,7 @@ class ManualTests extends ImpTestCase {
     
     function testGetVoltage() {
         local v = _fg.getVoltage();
-        assertBetween(v, 3.5, 4.2, "Voltage not in range: " + v + "V");
+        assertBetween(v, 3.5, 4.3, "Voltage not in range: " + v + "V");
 
         return "Get voltage test complete";
     }
@@ -86,7 +86,7 @@ class ManualTests extends ImpTestCase {
         assertTrue("capacity" in soc, "State of charge missing capacity key");
 
         // actual, from, to, msg
-        assertBetween(soc.capacity, 0, 2100, "SOC capacity not in range: " + soc.capacity + "mAh");
+        assertBetween(soc.capacity, 0, 3000, "SOC capacity not in range: " + soc.capacity + "mAh");
         assertBetween(soc.percent, 0, 120, "SOC percent not in range: " + soc.percent + "%");
 
         return "State or charge test complete";

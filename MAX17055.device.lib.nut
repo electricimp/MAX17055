@@ -268,13 +268,14 @@ class MAX17055 {
     }
 
     function getAlertStatus() {
+        // NOTE: Only supported alerts are exposed in table
+        // with readable keys, however the raw value is also
+        // included for debugging purposes. 
         local status = _readReg(MAX17055_STATUS_REG);
         return {
             "powerOnReset"              : (status & 0x0002),
-            "battRemovalDetected"       : (status & 0x8000),
-            "battInsertDetected"        : (status & 0x0800),
-            "battAbsent"                : (status & 0x0008),
-            "chargeStatePercentChange"  : (status & 0x0080)
+            "chargeStatePercentChange"  : (status & 0x0080), 
+            "raw"                       : status
         };
     }
 
@@ -285,16 +286,10 @@ class MAX17055 {
     function enableAlerts(alerts) {
         local config  = _readReg(MAX17055_CONFIG_REG);
         local config2 = _readReg(MAX17055_CONFIG_2_REG);
-        if ("enBattRemove" in alerts) {
-            // Config bit 0
-            local bit = 0;
-            config = (alerts.enBattRemove) ? (config | (0x01 << bit)) : (config & ~(0x01 << bit));
-        }
-        if ("enBattInsert" in alerts) {
-            // Config bit 1
-            local bit = 1;
-            config = (alerts.enBattInsert) ? (config | (0x01 << bit)) : (config & ~(0x01 << bit));
-        }
+        // NOTE: AIN Pin is not connected on impC001 or imp006 breakout 
+        // boards, so battery insert and removal alerts cannot be
+        // detected on this hardware. Since we cannot test, these 
+        // are not currently supported by this library.
         if ("enAlertPin" in alerts) {
             // Config bit 2
             local bit = 2;

@@ -220,10 +220,8 @@ Use this method to enable or disable the alert pin, battery or percentage change
 
 | Key | Type | Required | Description |
 | --- | --- | --- | --- |
-| *enAlertPin* | Boolean | No | Enable or disable the alert interrupt pin |
-| *enBattRemove* | Boolean | No | Enable or disable an alert when a battery is removed |
-| *enBattInsert* | Boolean | No | Enable or disable an alert when a battery is inserted |
 | *enChargeStatePercentChange* | Boolean | No | Enable or disable an alert when the charge percentage crosses an integer percentage boundary, such as 50.0%, 51.0%, etc |
+| *enAlertPin* | Boolean | No | Enable or disable the alert interrupt pin. NOTE: This pin is not connected on impC001 breakout board, but can be connected via Test Piont 4 (TP4) |
 
 #### Return Value ####
 
@@ -243,7 +241,7 @@ fuelGauge.enableAlerts(enAlerts);
 
 ### getAlertStatus() ###
 
-This method returns a table containing the current status of all flags related to alerts. Alerts need to be reset by calling *clearStatusAlerts()*.
+This method returns a table containing the current status of flags related to alerts. Alerts need to be reset by calling *clearStatusAlerts()*.
 
 #### Return Value ####
 
@@ -252,17 +250,15 @@ Table &mdash; Contains the following keys:
 | Key | Type | Description |
 | --- | --- | --- |
 | *powerOnReset* | Boolean | `true` when the system detects that a software or hardware power on reset event has occurred |
-| *battRemovalDetected* | Boolean | When detection is enabled, this is `true` when the system detects that a battery has been removed. This flag must be cleared in order to detect the next removal event |
-| *battInsertDetected* | Boolean | When detection is enabled, this is `true` when the system detects that a battery has been inserted. This flag must be cleared in order to detect the next insertion event |
-| *battAbsent* | Boolean | `true` when the system detects that a battery is absent; `false` when system detects that a battery is present |
 | *chargeStatePercentChange* | Boolean | When detection is enabled, this is `true` whenever the charge percentage crosses an integer percentage boundary, such as 50.0%, 51.0%, etc. This flag must be cleared to detect next event |
+| *raw* | Integer | Raw status register value. For debugging purposes | 
 
 #### Example ####
 
 ```squirrel
 local status = fuelGauge.getAlertStatus();
 foreach (alert, state in status) {
-  if (state) server.log("Alert detected: " + alert);
+  if (state && alert !== "raw") server.log("Alert detected: " + alert);
 }
 ```
 
