@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright 2018 Electric Imp
+// Copyright 2018-19 Electric Imp
 //
 // SPDX-License-Identifier: MIT
 //
@@ -88,7 +88,7 @@ class MAX17055 {
     constructor(i2c, addr = null) {
         _i2c = i2c;
         _addr = (addr == null) ? MAX17055_DEFAULT_I2C_ADDR : addr;
-        
+
         _regReadyCounter    = 0;
         _writeVerifyCounter = 0;
     }
@@ -270,11 +270,11 @@ class MAX17055 {
     function getAlertStatus() {
         // NOTE: Only supported alerts are exposed in table
         // with readable keys, however the raw value is also
-        // included for debugging purposes. 
+        // included for debugging purposes.
         local status = _readReg(MAX17055_STATUS_REG);
         return {
             "powerOnReset"              : (status & 0x0002),
-            "chargeStatePercentChange"  : (status & 0x0080), 
+            "chargeStatePercentChange"  : (status & 0x0080),
             "raw"                       : status
         };
     }
@@ -286,9 +286,9 @@ class MAX17055 {
     function enableAlerts(alerts) {
         local config  = _readReg(MAX17055_CONFIG_REG);
         local config2 = _readReg(MAX17055_CONFIG_2_REG);
-        // NOTE: AIN Pin is not connected on impC001 or imp006 breakout 
+        // NOTE: AIN Pin is not connected on impC001 or imp006 breakout
         // boards, so battery insert and removal alerts cannot be
-        // detected on this hardware. Since we cannot test, these 
+        // detected on this hardware. Since we cannot test, these
         // are not currently supported by this library.
         if ("enAlertPin" in alerts) {
             // Config bit 2
