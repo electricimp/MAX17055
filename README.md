@@ -2,7 +2,7 @@
 
 The [MAX17055](https://datasheets.maximintegrated.com/en/ds/MAX17055.pdf) is a low-power fuel-gauge IC that implements the [Maxim ModelGauge m5 EZ algorithm](https://www.maximintegrated.com/en/design/partners-and-technology/design-technology/modelgauge-battery-fuel-gauge-technology.html). It measures battery voltage, current and temperature to produce fuel gauge results. Its typical power consumption is 7μA.
 
-**To add this library to your project, add** `#require "MAX17055.device.lib.nut:1.0.2"` **to the top of your device code.**
+**To include this library in your project, add** `#require "MAX17055.device.lib.nut:1.0.2"` **at the top of your device code.**
 
 ## Class Usage ##
 
@@ -10,10 +10,10 @@ The [MAX17055](https://datasheets.maximintegrated.com/en/ds/MAX17055.pdf) is a l
 
 #### Parameters ####
 
-| Parameter | Type | Required | Description |
+| Parameter | Type | Required? | Description |
 | --- | --- | --- | --- |
-| *i2cBus* | imp i2c bus object | Yes | The imp i2c bus that the fuel gauge is connected to. The i2c bus **must** be preconfigured; the library will not configure the bus |
-| *i2cAddress* | Integer | No | The i2c address of the fuel gauge. Default: `0x6C` |
+| *i2cBus* | Object | Yes | The imp I&sup2;C bus that the fuel gauge is connected to. The bus **must** be pre-configured; the library will not configure the bus |
+| *i2cAddress* | Integer | No | The I&sup2;C address of the fuel gauge. Default: `0x6C` |
 
 #### Return Value ####
 
@@ -37,18 +37,18 @@ This method initializes the fuel gauge. If a power on reset alert is detected, t
 
 #### Parameters ####
 
-| Parameter | Type | Required | Description |
+| Parameter | Type | Required? | Description |
 | --- | --- | --- | --- |
 | *settings* | Table | Yes | A table of configuration settings *(see below)* |
 | *callback* | Function | No | A function that will be triggered when initialization is complete. It has one (required) parameter of its own which will receive an error message string if an error was encountered during initialization, otherwise `null` |
 
 #### Settings Table Options ####
 
-| Key | Type | Required | Description |
+| Key | Type | Required? | Description |
 | --- | --- | --- | --- |
 | *desCap* | Integer | Yes | The designed capacity of the battery in mAh |
 | *senseRes* | Float | Yes | The size of the sense resistor in &Omega; |
-| *chrgTerm* | Integer | Yes | The battery's termination charge in mA |
+| *chrgTerm* | Integer | Yes | The battery’s termination charge in mA |
 | *emptyVTarget* | Float | Yes | The empty target voltage in V. Resolution is 10mV |
 | *recoveryV* | Float | Yes | A recovery voltage in V. Once the cell voltage rises above this point, empty voltage detection is re-enabled. Resolution is 40mV |
 | *chrgV* | Integer | Yes | The charge voltage. Use the class constants *MAX17055_V_CHRG_4_2* (4.2V) or *MAX17055_V_CHRG_4_4_OR_4_35* (4.35V or 4.4V) |
@@ -62,28 +62,28 @@ Nothing.
 
 ```squirrel
 local settings = {
-  "desCap"       : 2000, // mAh
-  "senseRes"     : 0.01, // ohms
-  "chrgTerm"     : 20,   // mA
-  "emptyVTarget" : 3.3,  // V
-  "recoveryV"    : 3.88, // V
-  "chrgV"        : MAX17055_V_CHRG_4_2,
-  "battType"     : MAX17055_BATT_TYPE.LiCoO2
+    "desCap"       : 2000, // mAh
+    "senseRes"     : 0.01, // ohms
+    "chrgTerm"     : 20,   // mA
+    "emptyVTarget" : 3.3,  // V
+    "recoveryV"    : 3.88, // V
+    "chrgV"        : MAX17055_V_CHRG_4_2,
+    "battType"     : MAX17055_BATT_TYPE.LiCoO2
 }
 
 fuelGauge.init(settings, function(err) {
-  if (err != null) {
-    server.error(err);
-  } else {
-    server.log("Fuel gauge initialized.");
-    // Start using fuel gauge.
-  }
+    if (err != null) {
+        server.error(err);
+    } else {
+        server.log("Fuel gauge initialized.");
+        // Start using fuel gauge.
+    }
 });
 ```
 
 ### getStateOfCharge() ###
 
-This method returns the gauge's reported remaining capacity in mAh and state-of-charge percentage output. The reported capacity is protected from making sudden jumps during load changes.
+This method returns the gauge’s reported remaining capacity in mAh and state-of-charge percentage output. The reported capacity is protected from making sudden jumps during load changes.
 
 #### Return Value ####
 
@@ -212,16 +212,16 @@ Use this method to enable or disable the alert pin, battery or percentage change
 
 #### Parameters ####
 
-| Parameter | Type | Required | Description |
+| Parameter | Type | Required? | Description |
 | --- | --- | --- | --- |
 | *alerts* | Table | Yes | A table with the alerts to be enabled/disabled *(see below)* |
 
 #### Enable Alerts ####
 
-| Key | Type | Required | Description |
+| Key | Type | Required? | Description |
 | --- | --- | --- | --- |
 | *enChargeStatePercentChange* | Boolean | No | Enable or disable an alert when the charge percentage crosses an integer percentage boundary, such as 50.0%, 51.0%, etc |
-| *enAlertPin* | Boolean | No | Enable or disable the alert interrupt pin. NOTE: This pin is not connected on impC001 breakout board, but can be connected via Test Piont 4 (TP4) |
+| *enAlertPin* | Boolean | No | Enable or disable the alert interrupt pin. **Note** This pin is not connected on the impC001 breakout board, but can be connected via Test Point 4 (TP4) |
 
 #### Return Value ####
 
@@ -232,8 +232,8 @@ Nothing.
 ```squirrel
 // Enable alert when battery is inserted, disable percent change alert
 local enAlerts = {
-  "enChargeStatePercentChange" : false,
-  "enBattInsert" : true
+    "enChargeStatePercentChange" : false,
+    "enBattInsert" : true
 };
 
 fuelGauge.enableAlerts(enAlerts);
@@ -241,7 +241,7 @@ fuelGauge.enableAlerts(enAlerts);
 
 ### getAlertStatus() ###
 
-This method returns a table containing the current status of flags related to alerts. Alerts need to be reset by calling *clearStatusAlerts()*.
+This method returns a table containing the current status of flags related to alerts. Alerts need to be reset by calling [*clearStatusAlerts()*](#clearstatusalerts).
 
 #### Return Value ####
 
@@ -251,14 +251,14 @@ Table &mdash; Contains the following keys:
 | --- | --- | --- |
 | *powerOnReset* | Boolean | `true` when the system detects that a software or hardware power on reset event has occurred |
 | *chargeStatePercentChange* | Boolean | When detection is enabled, this is `true` whenever the charge percentage crosses an integer percentage boundary, such as 50.0%, 51.0%, etc. This flag must be cleared to detect next event |
-| *raw* | Integer | Raw status register value for debugging purposes | 
+| *raw* | Integer | Raw status register value for debugging purposes |
 
 #### Example ####
 
 ```squirrel
 local status = fuelGauge.getAlertStatus();
 foreach (alert, state in status) {
-  if (state && alert != "raw") server.log("Alert detected: " + alert);
+    if (state && alert != "raw") server.log("Alert detected: " + alert);
 }
 ```
 
@@ -276,10 +276,10 @@ Nothing.
 local status = fuelGauge.getAlertStatus();
 local alertDetected = false;
 foreach (alert, state in status) {
-  if (state) {
-    alertDetected = true;
-    server.log("Alert detected: " + alert);
-  }
+    if (state) {
+        alertDetected = true;
+        server.log("Alert detected: " + alert);
+    }
 }
 
 if (alertDetected) fuelGauge.clearStatusAlerts();
