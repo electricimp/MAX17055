@@ -1,13 +1,20 @@
-#require "MAX17055.device.lib.nut:1.0.1"
+#require "BQ25895.device.lib.nut:3.0.0"
+#require "MAX17055.device.lib.nut:1.0.2"
 
 server.log("Device running....")
-server.log("---------------------");
+server.log("----------------------------------------------------");
+imp.enableblinkup(true);
+server.log(imp.getsoftwareversion());
 
-i2c <- hardware.i2cXDC;
+// i2c for impC001 Breakout Board rev5.0
+i2c <- hardware.i2cKL;
 i2c.configure(CLOCK_SPEED_400_KHZ);
 
-fuelGaugeReady <- false;
+// Initialize Libraries
+batteryCharger <- BQ25895(i2c);
 fuelGauge <- MAX17055(i2c);
+// Configure Battery Charger to default BQ25895 settings 4.208V, 2048mA.
+batteryCharger.enable();
 
 // Fuel gauge settings for a 2000mAh battery
 settings <- {
@@ -23,8 +30,6 @@ settings <- {
 // Alert settings
 alerts <- {
     "enAlertPin"   : false,
-    "enBattRemove" : true,
-    "enBattInsert" : false,
     "enChargeStatePercentChange" : true
 }
 
@@ -33,7 +38,7 @@ function checkAlertStatus() {
     local status = fuelGauge.getAlertStatus();
     local alertDetected = false;
     foreach (alert, state in status) {
-        if (state) {
+        if (state && alert != "raw") {
             alertDetected = true;
             server.log("Alert detected: " + alert);
         }
@@ -46,6 +51,8 @@ function checkAlertStatus() {
 }
 
 function logFuelGaugeInfo() {
+    server.log("Fuel gauge info:");
+    server.log("----------------------------------------------------");
     local state = fuelGauge.getStateOfCharge();
     server.log("Remaining cell capacity: " + state.capacity + "mAh");
     server.log("Percent of battery remaining: " + state.percent + "%");
@@ -65,6 +72,7 @@ function logFuelGaugeInfo() {
     server.log("Temp: " + temp + "°C");
     local rev = fuelGauge.getDeviceRev();
     server.log(format("Fuel gauge revision: 0x%04X", rev));
+    server.log("----------------------------------------------------");
 }
 
 function loop() {
@@ -73,7 +81,7 @@ function loop() {
     // Log current state of fuel gauge
     logFuelGaugeInfo();
     // Kick off next check
-    imp.wakeup(60, loop);
+    imp.wakeup(15, loop);
 }
 
 function initHandler(err) {
@@ -81,7 +89,6 @@ function initHandler(err) {
         server.log("Fuel gauge init error: " + err);
     } else {
         server.log("Fuel gauge initialized.");
-        fuelGaugeReady = true;
 
         // Enable/Disable alerts
         fuelGauge.enableAlerts(alerts);

@@ -1,0 +1,12 @@
+{
+  "deviceGroupId": "c81c78b0-c569-bf90-3ff5-28dfb745e7fd",
+  "timeout": 180,
+  "stopOnFail": false,
+  "allowDisconnect": false,
+  "builderCache": false,
+  "deviceFile": "MAX17055.device.lib.nut",
+  "testFiles": [
+    "*.test.nut",
+    "tests/**/*.test.nut"
+  ]
+}
